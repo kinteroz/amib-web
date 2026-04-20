@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import "../globals.css";
+import AiChatBot from "@/components/ui/ai/AiChatBot";
 
 export const metadata: Metadata = {
   title: "Asociación Mexicana de Instituciones Bursátiles",
@@ -23,6 +24,7 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider messages={messages}>
           {children}
+          <AiChatBot />
         </NextIntlClientProvider>
       </body>
     </html>

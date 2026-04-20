@@ -2,20 +2,21 @@
 
 import { createClient } from '@/lib/supabase/client';
 
-export async function login(email: string) {
+export async function login(email: string, password?: string) {
   const supabase = createClient();
   
-  const { error } = await supabase.auth.signInWithOtp({
+  if (!password) {
+    throw new Error('La contraseña es obligatoria para el acceso tradicional.');
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({
     email,
-    options: {
-      emailRedirectTo: `${window.location.origin}/auth/callback`,
-    },
+    password,
   });
 
   if (error) throw error;
   return true;
 }
 
-// Nota: Para Email/Password usaríamos signInWithPassword. 
-// Para simplificar y aumentar la seguridad, empezamos con Magic Link.
-// Si el usuario prefiere contraseña, lo ajustaremos.
+// Actualizado a sistema tradicional de Email/Password por solicitud del usuario.
+// El redireccionamiento se maneja directamente en el componente de UI.

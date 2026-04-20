@@ -79,6 +79,18 @@ export default async function AdminLayout({
                 Indicadores
               </Link>
             </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/eventos`} style={{ 
+                display: 'block', 
+                padding: '0.8rem 1rem', 
+                borderRadius: '8px', 
+                color: 'rgba(255,255,255,0.7)', 
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Eventos
+              </Link>
+            </li>
           </ul>
         </nav>
 

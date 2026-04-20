@@ -5,8 +5,15 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-export default async function proxy(request: NextRequest) {
-  // 1. Manejar el ruteo de internacionalización
+export default async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // 1. Skip internationalization for API routes (direct or localized)
+  if (pathname.startsWith('/api') || pathname.includes('/api/')) {
+    return NextResponse.next();
+  }
+
+  // 2. Manejar el ruteo de internacionalización
   const response = intlMiddleware(request);
 
   // 2. Crear el cliente de Supabase para actualizar la sesión
@@ -37,8 +44,6 @@ export default async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl;
 
   // 4. Protección de rutas administrativas
   // Detectar si estamos en una ruta /admin (considerando el localeprefix /es/admin o /en/admin)

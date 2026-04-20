@@ -14,10 +14,7 @@
   z-index: 0;
 }
 
-.stackedSectionWrapper {
-  position: relative;
-  height: 105vh; /* Aún más ceñido para el flujo inmersivo */
-}
+
 
 .fullBleedHero {
   width: 100%;
@@ -26,13 +23,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 5%;
+  padding: 0; /* Removing fixed padding to let child containers handle it */
   text-align: center;
   position: relative;
   z-index: 10;
-  overflow: hidden;
+  overflow: visible; 
   background-color: var(--color-primary-container);
-  background-image: linear-gradient(rgba(0, 15, 30, 0.85), rgba(0, 15, 30, 0.85)), url('/images/hero_premium.png');
+  background-image: linear-gradient(rgba(0, 5, 15, 0.9), rgba(0, 15, 30, 0.85)), url('/images/hero_premium.png');
   background-size: cover;
   background-position: center;
 }
@@ -57,17 +54,7 @@
 }
 
 
-.stackedSectionContent {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  transform-origin: top center;
-}
+
 
 /* News Ticker Bar */
 .newsTickerContainer {
@@ -121,16 +108,18 @@
 
 /* Market Bar (Horizontal Ribbon) */
 .marketBarContainer {
-  width: 100vw;
-  margin-left: calc(-5vw); /* Compensa el padding 5% del padre */
+  width: 100%;
+  margin-left: 0;
   margin-bottom: 0;
-  padding: 1.5rem 0;
+  padding: 1.2rem 0;
   display: flex;
   gap: 4rem;
   overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   white-space: nowrap;
+  background: transparent;
 }
 
 .marketTicker {
@@ -167,7 +156,7 @@
   font-family: 'JetBrains Mono', monospace, ui-monospace;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-primary-container);
+  color: white;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -265,6 +254,245 @@
 }
 
 .lightMode .glassCard {
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 40px 60px -10px rgba(25, 28, 30, 0.08);
+  background: rgba(255, 255, 255, 0.85); /* Un poco más transparente para el blur */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 40px 60px -10px rgba(25, 28, 30, 0.08), inset 0 0 20px rgba(255, 255, 255, 1);
 }
+
+/* Premium Card Styles for Items (News, Calendar Cards) */
+.premiumCard {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.premiumCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.premiumCard:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.premiumCard:hover::before {
+  opacity: 1;
+}
+
+.premiumCardLight {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+}
+
+.premiumCardLight:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ===== RESPONSIVE UTILITIES ===== */
+
+/* Calendar: stack to column on mobile */
+.calendarResponsiveGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .calendarResponsiveGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Event Countdown Card: responsive padding & font */
+.eventCardInner {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+}
+
+.eventCardTitle {
+  font-size: clamp(1.8rem, 6vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.eventCardContent {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 60px -10px rgba(0, 15, 30, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem;
+  min-height: 400px;
+  color: white;
+  background-color: var(--color-primary-container);
+}
+
+@media (max-width: 700px) {
+  .eventCardContent {
+    padding: 2rem 1.5rem;
+    min-height: 320px;
+  }
+}
+
+.countdownRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.countdownUnit {
+  text-align: center;
+  background: rgba(255,255,255,0.05);
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  min-width: 70px;
+}
+
+.countdownNumber {
+  font-size: clamp(1.6rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: var(--color-secondary-container);
+  line-height: 1;
+}
+
+.countdownLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  margin-top: 0.4rem;
+}
+
+.eventCardActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Header responsive: hide nav on small screens */
+.headerNav {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.headerSearch {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .headerNav {
+    display: none;
+  }
+  .headerSearch {
+    display: none;
+  }
+}
+
+/* Footer responsive grid */
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 900px) {
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .footerBottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+/* Scroll-Driven Events Section */
+.stickyScrollContainer {
+  position: relative;
+  width: 100%;
+}
+
+.stickyWrapper {
+  position: sticky;
+  top: 120px; /* Align with layout spacing */
+  height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrollProgressIndicator {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  z-index: 50;
+}
+
+@media (max-width: 1024px) {
+  .scrollProgressIndicator {
+    display: none;
+  }
+}
+

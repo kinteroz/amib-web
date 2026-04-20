@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { SegmentSwitcher } from '@/components/ui/navigation/SegmentSwitcher';
+import styles from '@/components/ui/animations/animations.module.css';
 
 export function Header() {
   const { scrollY } = useScroll();
@@ -58,7 +59,6 @@ export function Header() {
         alignItems: 'center',
         color: isScrolled ? 'var(--on-surface)' : 'var(--on-primary)',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        overflow: 'hidden'
       }}
     >
       {/* Left Column: Logo */}
@@ -76,7 +76,7 @@ export function Header() {
 
       {/* Right Column: Navigation & Search */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', justifyContent: 'flex-end' }}>
-        <nav style={{ display: 'flex', gap: '1.25rem', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <nav className={styles.headerNav}>
           {currentSegment === 'asociados' ? (
             <>
               <Link href="/asociados" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Gremio</Link>
@@ -98,7 +98,7 @@ export function Header() {
           )}
         </nav>
 
-        <form onSubmit={handleSearch} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+        <form onSubmit={handleSearch} className={styles.headerSearch}>
           <input 
             type="text" 
             placeholder="Buscar..."

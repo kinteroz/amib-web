@@ -27,7 +27,7 @@ export function StackedSection({ children, index, totalSections }: StackedSectio
   // To create the 'stacked cards' overlapping feel, the top of the content must be sticky
   
   return (
-    <div ref={containerRef} className={styles.stackedSectionWrapper} style={{ zIndex: totalSections - index }}>
+    <div ref={containerRef} className={styles.stackedSectionWrapper} style={{ position: 'relative', zIndex: totalSections - index }}>
       <motion.div 
         className={styles.stackedSectionContent}
         style={{ scale, opacity }}

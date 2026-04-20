@@ -86,6 +86,51 @@ export default function AdminDashboard() {
             Editar Banners
           </a>
         </div>
+
+        {/* Events CMS Card */}
+        <div style={{ 
+          background: 'white', 
+          padding: '2rem', 
+          borderRadius: '16px', 
+          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
+          border: '1px solid #e2e8f0',
+          gridColumn: '1 / -1' // Span full width for emphasis
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+             <h2 style={{ fontSize: '1.25rem', color: '#0f172a' }}>Gestión de Eventos y Calendario</h2>
+             <span style={{ fontSize: '0.75rem', fontWeight: 600, background: '#dcfce7', color: '#166534', padding: '0.2rem 0.6rem', borderRadius: '4px' }}>NUEVO</span>
+          </div>
+          <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '2rem', maxWidth: '800px' }}>
+            Crea nuevos eventos, configura sus fechas, gestiona los accesos (Libre, Pago, Invitación), crea la agenda dinámica de sesiones y administra los boletos y acompañantes que se registrarán en la plataforma.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+              <a href="/admin/eventos" style={{ 
+                display: 'inline-block', 
+                padding: '0.75rem 1.5rem', 
+                background: '#001F3F', 
+                color: 'white', 
+                borderRadius: '8px', 
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 600
+              }}>
+                Ir al Administrador de Eventos
+              </a>
+              <a href="/admin/eventos/nuevo" style={{ 
+                display: 'inline-block', 
+                padding: '0.75rem 1.5rem', 
+                background: 'white', 
+                color: '#001F3F', 
+                borderRadius: '8px', 
+                border: '1px solid #001F3F',
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 600
+              }}>
+                Crear Nuevo Evento
+              </a>
+          </div>
+        </div>
       </div>
     </div>
   );

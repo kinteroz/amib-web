@@ -82,6 +82,62 @@ export interface Database {
           vigencia_meses?: number | null
         }
       }
+      eventos: {
+        Row: {
+          activo: boolean
+          audiencia: string | null
+          costo: number | null
+          created_at: string
+          descripcion: string | null
+          es_destacado: boolean
+          fecha_fin: string | null
+          fecha_inicio: string
+          id: string
+          imagen_url: string | null
+          modalidad: string | null
+          registro_url: string | null
+          tipo_acceso: string | null
+          titulo: string
+          ubicacion: string | null
+          updated_at: string
+        }
+        Insert: {
+          activo?: boolean
+          audiencia?: string | null
+          costo?: number | null
+          created_at?: string
+          descripcion?: string | null
+          es_destacado?: boolean
+          fecha_fin?: string | null
+          fecha_inicio: string
+          id?: string
+          imagen_url?: string | null
+          modalidad?: string | null
+          registro_url?: string | null
+          tipo_acceso?: string | null
+          titulo: string
+          ubicacion?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activo?: boolean
+          audiencia?: string | null
+          costo?: number | null
+          created_at?: string
+          descripcion?: string | null
+          es_destacado?: boolean
+          fecha_fin?: string | null
+          fecha_inicio?: string
+          id?: string
+          imagen_url?: string | null
+          modalidad?: string | null
+          registro_url?: string | null
+          tipo_acceso?: string | null
+          titulo?: string
+          ubicacion?: string | null
+          updated_at?: string
+        }
+      }
       noticias: {
         Row: {
           categoria: string | null

@@ -1,0 +1,231 @@
+/* src/components/ui/ai/AiChatBot.module.css */
+
+.botContainer {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99999; /* Super high z-index to stay on top of everything */
+  font-family: var(--font-body);
+}
+
+.fab {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0047AB, #002048); /* Premium Cobalt Gradient */
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 32, 72, 0.5), 0 0 15px rgba(0, 71, 171, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fab:hover {
+  transform: scale(1.1) translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 32, 72, 0.6), 0 0 25px rgba(0, 71, 171, 0.6);
+}
+
+.fabOpen {
+  background: #191c1e;
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: rotate(90deg);
+}
+
+.chatWindow {
+  position: absolute;
+  bottom: 5.5rem;
+  right: 0;
+  width: 400px;
+  height: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+  border-radius: 24px;
+}
+
+/* Dark mode support if available */
+@media (prefers-color-scheme: dark) {
+  .chatWindow {
+    background: rgba(20, 20, 25, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.header {
+  background: linear-gradient(135deg, #002048, #1B365F);
+  color: white;
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.iconWrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: transparent;
+}
+
+.message {
+  max-width: 85%;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  border-radius: 18px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.userMessage {
+  align-self: flex-end;
+  background: #0047AB;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.modelMessage {
+  align-self: flex-start;
+  background: white;
+  color: #191c1e;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-bottom-left-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modelMessage {
+    background: #2a2a30;
+    color: #f3f3f7;
+    border-color: rgba(255,255,255,0.05);
+  }
+}
+
+.typingIndicator {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.5);
+  border-radius: 14px;
+  align-self: flex-start;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #0047AB;
+  opacity: 0.6;
+  border-radius: 50%;
+}
+
+.inputArea {
+  padding: 1.25rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.inputForm {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.inputField {
+  flex: 1;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.inputField:focus {
+  border-color: #0047AB;
+  box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.1);
+}
+
+.sendBtn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 14px;
+  background: #0047AB;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sendBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: #003682;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .chatWindow {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    bottom: 5.5rem;
+    width: auto;
+    height: auto;
+    max-height: none;
+  }
+  .botContainer {
+      bottom: 1rem;
+      right: 1rem;
+  }
+}

@@ -19,7 +19,7 @@ export function MarketPulse() {
     <motion.div 
       ref={ref} 
       className={styles.marketContainer}
-      style={{ y, opacity }}
+      style={{ y, opacity, position: 'relative' }}
     >
       <svg width="100%" height="100%" viewBox="0 0 1440 800" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <motion.path
