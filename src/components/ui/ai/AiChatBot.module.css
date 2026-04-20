@@ -9,18 +9,77 @@
 }
 
 .fab {
+  position: relative;
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0047AB, #002048); /* Premium Cobalt Gradient */
+  background: linear-gradient(135deg, #0047AB, #002048);
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: none;
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(0, 32, 72, 0.5), 0 0 15px rgba(0, 71, 171, 0.4);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+  z-index: 1;
+  isolation: isolate;
+}
+
+/* Contorno tornasol animado */
+.fab::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    #ff006e,
+    #8338ec,
+    #3a86ff,
+    #06ffa5,
+    #ffbe0b,
+    #fb5607,
+    #ff006e
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: iridescentSpin 4s linear infinite;
+  z-index: -1;
+}
+
+/* Glow suave tornasol */
+.fab::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 0, 110, 0.4),
+    rgba(131, 56, 236, 0.4),
+    rgba(58, 134, 255, 0.4),
+    rgba(6, 255, 165, 0.4),
+    rgba(255, 190, 11, 0.4),
+    rgba(251, 86, 7, 0.4),
+    rgba(255, 0, 110, 0.4)
+  );
+  filter: blur(12px);
+  opacity: 0.6;
+  animation: iridescentSpin 4s linear infinite;
+  z-index: -2;
+}
+
+@keyframes iridescentSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .fab:hover {
@@ -28,10 +87,19 @@
   box-shadow: 0 20px 40px rgba(0, 32, 72, 0.6), 0 0 25px rgba(0, 71, 171, 0.6);
 }
 
+.fab:hover::after {
+  opacity: 1;
+  inset: -12px;
+}
+
 .fabOpen {
   background: #191c1e;
-  border-color: rgba(255, 255, 255, 0.1);
   transform: rotate(90deg);
+}
+
+.fabOpen::before,
+.fabOpen::after {
+  animation-duration: 2s;
 }
 
 .chatWindow {
