@@ -5,15 +5,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import styles from './AiChatBot.module.css';
 
+interface ChatMessage {
+    id: string;
+    role: 'user' | 'model';
+    content: string;
+}
+
 export default function AiChatBot() {
     const [isOpen, setIsOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-    const [messages, setMessages] = useState<{role: 'user' | 'model', content: string}[]>([
-        { role: 'model', content: '🌟 ¡Hola! Soy tu asistente AMIB IA. Estoy aquí para guiarte usando la Guía de Certificación del Mercado de Valores. ¿En qué te puedo ayudar hoy?' }
+    const [messages, setMessages] = useState<ChatMessage[]>([
+        { id: '1', role: 'model', content: '🌟 ¡Hola! Soy tu asistente AMIB IA. Estoy aquí para guiarte usando la Guía de Certificación del Mercado de Valores. ¿En qué te puedo ayudar hoy?' }
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messageCountRef = useRef(1);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,7 +35,9 @@ export default function AiChatBot() {
 
         const userMsg = input.trim();
         setInput('');
-        const newHistory = [...messages, { role: 'user' as const, content: userMsg }];
+        messageCountRef.current += 1;
+        const userMsgId = String(messageCountRef.current);
+        const newHistory = [...messages, { id: userMsgId, role: 'user' as const, content: userMsg }];
         setMessages(newHistory);
         setIsTyping(true);
 
@@ -50,7 +59,9 @@ export default function AiChatBot() {
             const decoder = new TextDecoder();
             let fullResponse = '';
 
-            setMessages(prev => [...prev, { role: 'model', content: '' }]);
+            messageCountRef.current += 1;
+            const modelMsgId = String(messageCountRef.current);
+            setMessages(prev => [...prev, { id: modelMsgId, role: 'model', content: '' }]);
 
             while (reader) {
                 const { done, value } = await reader.read();
@@ -67,7 +78,9 @@ export default function AiChatBot() {
             }
 
         } catch (error: any) {
+            messageCountRef.current += 1;
             setMessages(prev => [...prev, {
+                id: String(messageCountRef.current),
                 role: 'model',
                 content: '❌ Lo siento, tuve un problema de conexión. Asegúrate de haber configurado tu API Key correctamente.'
             }]);
@@ -76,7 +89,7 @@ export default function AiChatBot() {
         }
     };
 
-    const ChatContent = () => (
+    const chatContent = (
         <>
             {/* Header */}
             <div className={styles.header}>
@@ -109,8 +122,8 @@ export default function AiChatBot() {
 
             {/* Messages */}
             <div className={styles.messages}>
-                {messages.map((msg, idx) => (
-                    <div key={idx} className={msg.role === 'user' ? styles.userMessageContainer : styles.modelMessageContainer} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', width: '100%' }}>
+                {messages.map((msg) => (
+                    <div key={msg.id} className={msg.role === 'user' ? styles.userMessageContainer : styles.modelMessageContainer} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', width: '100%' }}>
                         <div className={`${styles.message} ${msg.role === 'user' ? styles.userMessage : styles.modelMessage}`}>
                             {msg.role === 'model' ? (
                                 <ReactMarkdown
@@ -181,7 +194,7 @@ export default function AiChatBot() {
                             exit={{ y: 20, opacity: 0 }}
                             className={styles.expandedWindow}
                         >
-                            <ChatContent />
+                            {chatContent}
                         </motion.div>
                     </motion.div>
                 )}
@@ -195,7 +208,7 @@ export default function AiChatBot() {
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         className={styles.chatWindow}
                     >
-                        <ChatContent />
+                        {chatContent}
                         {/* Botón Expandir dentro del bubble */}
                         <button
                             onClick={() => setIsExpanded(true)}
