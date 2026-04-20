@@ -138,6 +138,41 @@ export interface Database {
           updated_at?: string
         }
       }
+      evento_tickets: {
+        Row: {
+          id: string
+          evento_id: string
+          nombre: string
+          descripcion: string | null
+          precio: number
+          cantidad_disponible: number | null
+          activo: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          evento_id: string
+          nombre: string
+          descripcion?: string | null
+          precio: number
+          cantidad_disponible?: number | null
+          activo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          evento_id?: string
+          nombre?: string
+          descripcion?: string | null
+          precio?: number
+          cantidad_disponible?: number | null
+          activo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
       noticias: {
         Row: {
           categoria: string | null

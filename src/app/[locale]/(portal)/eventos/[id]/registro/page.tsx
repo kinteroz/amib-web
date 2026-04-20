@@ -14,11 +14,11 @@ export default async function EventRegistrationPage({ params }: RegistrationPage
   const supabase = await createClient();
 
   // Fetch Event
-  const { data: evento, error } = await supabase
+  const { data: evento, error } = (await supabase
     .from('eventos')
     .select('*')
     .eq('id', id)
-    .single();
+    .single()) as any;
 
   if (error) {
     console.error('[DEBUG] Supabase Error fetching event:', error);

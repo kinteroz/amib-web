@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { Database } from '@/types/database.types';
 import Link from 'next/link';
 
 export default function AdminEventos() {
@@ -26,6 +27,7 @@ export default function AdminEventos() {
   const toggleStatus = async (id: string, currentState: boolean) => {
     const { error } = await supabase
       .from('eventos')
+      // @ts-ignore - Supabase type inference issue with dynamic tables
       .update({ activo: !currentState })
       .eq('id', id);
 
