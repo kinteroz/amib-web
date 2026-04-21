@@ -91,7 +91,7 @@ export function Header() {
             </>
           ) : (
             <>
-              <Link href="/" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Market</Link>
+              <Link href="/market" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Market</Link>
               <Link href="/certificaciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Certificación</Link>
               <Link href="/" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Nosotros</Link>
             </>

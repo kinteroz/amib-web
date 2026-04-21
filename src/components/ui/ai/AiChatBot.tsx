@@ -112,7 +112,7 @@ export default function AiChatBot() {
                             </svg>
                         </button>
                     )}
-                    <button onClick={() => setIsOpen(false)} className={styles.closeBtn} title="Cerrar">
+                    <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className={styles.closeBtn} title="Cerrar">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>

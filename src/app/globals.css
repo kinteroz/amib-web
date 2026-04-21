@@ -1,6 +1,7 @@
 /* src/app/globals.css */
 
 :root {
+  color-scheme: dark;
   /* The Financial Curator - Design Tokens */
   --color-primary: #002048; /* Cobalt Dark */
   --color-primary-container: #1B365F; /* Navy Blue */
@@ -35,10 +36,9 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--surface);
+  background-color: var(--color-primary);
   color: var(--on-surface);
   font-family: var(--font-body);
-  /* Tridimensional Foundation: Set smooth scrolling off for Framer Motion control */
   scroll-behavior: auto;
 }
 

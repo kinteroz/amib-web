@@ -20,7 +20,17 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        {/* Critical: parsed before any external CSS file, eliminates white flash */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          :root { color-scheme: dark; }
+          html, body {
+            background-color: #002048 !important;
+            margin: 0; padding: 0;
+          }
+        `}} />
+      </head>
       <body>
         <NextIntlClientProvider messages={messages}>
           {children}
