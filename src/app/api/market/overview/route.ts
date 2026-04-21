@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import {
   getEquityQuote,
   getFxDaily,
@@ -8,6 +9,7 @@ import {
   type NewsItem,
 } from '@/lib/market/alphaVantage';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 21600; // 6h
 
 const MX_ADRS = [
