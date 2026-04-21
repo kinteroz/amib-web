@@ -85,10 +85,13 @@ export function MarketDashboard({ data }: { data: OverviewPayload }) {
 
   const { fx, proxies, adrs, commodities, news = [], warnings, asOf } = data;
 
-  const asOfStr = new Date(asOf).toLocaleString('es-MX', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
+  const [asOfStr, setAsOfStr] = useState('');
+  useEffect(() => {
+    setAsOfStr(new Date(asOf).toLocaleString('es-MX', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    }));
+  }, [asOf]);
 
   const getSentimentColor = (label: string) => {
     if (label.includes('Bullish')) return '#30D158';
