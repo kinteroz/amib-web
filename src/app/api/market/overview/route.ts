@@ -35,6 +35,8 @@ export interface OverviewPayload {
   warnings: string[];
 }
 
+const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 async function safe<T>(fn: () => Promise<T>, label: string, warnings: string[]): Promise<T | null> {
   try {
     return await fn();
@@ -44,19 +46,37 @@ async function safe<T>(fn: () => Promise<T>, label: string, warnings: string[]):
   }
 }
 
+async function batchSequential<T>(
+  tasks: Array<() => Promise<T>>,
+  batchSize: number,
+  pauseMs: number
+): Promise<T[]> {
+  const results: T[] = [];
+  for (let i = 0; i < tasks.length; i += batchSize) {
+    const batch = tasks.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(t => t()));
+    results.push(...batchResults);
+    if (i + batchSize < tasks.length) await delay(pauseMs);
+  }
+  return results;
+}
+
 export async function GET() {
   const warnings: string[] = [];
 
-  // Parallel fetch inclusive of new news and metals
-  const [fx, ...rest] = await Promise.all([
-    safe(() => getFxDaily('USD', 'MXN'), 'USD/MXN', warnings),
-    ...PROXIES.map(p => safe(() => getEquityQuote(p.symbol), p.symbol, warnings)),
-    ...MX_ADRS.map(a => safe(() => getEquityQuote(a.symbol), a.symbol, warnings)),
-    safe(() => getCommodity('WTI'), 'WTI', warnings),
-    safe(() => getCommodity('SILVER'), 'SILVER', warnings),
-    safe(() => getNewsSentiment('EWW,AMX'), 'News', warnings),
-  ]);
+  // Alpha Vantage free tier: 5 req/min — run in batches of 4 with 13s pause
+  const tasks: Array<() => Promise<any>> = [
+    () => safe(() => getFxDaily('USD', 'MXN'), 'USD/MXN', warnings),
+    ...PROXIES.map(p => () => safe(() => getEquityQuote(p.symbol), p.symbol, warnings)),
+    ...MX_ADRS.map(a => () => safe(() => getEquityQuote(a.symbol), a.symbol, warnings)),
+    () => safe(() => getCommodity('WTI'), 'WTI', warnings),
+    () => safe(() => getCommodity('SILVER'), 'SILVER', warnings),
+    () => safe(() => getNewsSentiment('EWW,AMX'), 'News', warnings),
+  ];
 
+  const all = await batchSequential(tasks, 4, 13_000);
+
+  const [fx, ...rest] = all;
   const proxyQuotes = rest.slice(0, PROXIES.length) as (Quote | null)[];
   const adrQuotes = rest.slice(PROXIES.length, PROXIES.length + MX_ADRS.length) as (Quote | null)[];
   const wti = rest[PROXIES.length + MX_ADRS.length] as Quote | null;
