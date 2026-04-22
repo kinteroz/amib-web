@@ -20,6 +20,17 @@ export interface Database {
           subtitulo: string | null
           titulo: string
           updated_at: string
+          tipo_hero: 'split' | 'fullscreen-video' | 'fullscreen-image'
+          efecto_overlay: 'matrix' | 'pulse' | 'grain' | 'none'
+          media_url: string | null
+          media_tipo: 'image' | 'video'
+          badge_texto: string | null
+          cta_texto: string | null
+          cta_enlace: string | null
+          cta_texto_2: string | null
+          cta_enlace_2: string | null
+          estadisticas_json: Json
+          duracion: number | null
         }
         Insert: {
           activo?: boolean
@@ -31,6 +42,17 @@ export interface Database {
           subtitulo?: string | null
           titulo: string
           updated_at?: string
+          tipo_hero?: 'split' | 'fullscreen-video' | 'fullscreen-image'
+          efecto_overlay?: 'matrix' | 'pulse' | 'grain' | 'none'
+          media_url?: string | null
+          media_tipo?: 'image' | 'video'
+          badge_texto?: string | null
+          cta_texto?: string | null
+          cta_enlace?: string | null
+          cta_texto_2?: string | null
+          cta_enlace_2?: string | null
+          estadisticas_json?: Json
+          duracion?: number | null
         }
         Update: {
           activo?: boolean
@@ -42,6 +64,17 @@ export interface Database {
           subtitulo?: string | null
           titulo?: string
           updated_at?: string
+          tipo_hero?: 'split' | 'fullscreen-video' | 'fullscreen-image'
+          efecto_overlay?: 'matrix' | 'pulse' | 'grain' | 'none'
+          media_url?: string | null
+          media_tipo?: 'image' | 'video'
+          badge_texto?: string | null
+          cta_texto?: string | null
+          cta_enlace?: string | null
+          cta_texto_2?: string | null
+          cta_enlace_2?: string | null
+          estadisticas_json?: Json
+          duracion?: number | null
         }
       }
       certificaciones: {

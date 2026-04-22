@@ -2,28 +2,29 @@
 
 import React from 'react';
 import { Header } from '@/components/layout/Header';
-import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
-export default function PortalLayout({
+export default function PortalGroupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
 
+  // Si estamos dentro del portal privado, omitir el Header del sitio público.
+  // El PortalLayout (sidebar + topbar) gestiona su propia navegación.
+  const isPrivatePortal = pathname.includes('/asociados/portal');
+
+  if (isPrivatePortal) {
+    return <>{children}</>;
+  }
+
   return (
     <div style={{ background: 'var(--color-primary-container)', minHeight: '100vh' }}>
       <Header />
-      <AnimatePresence mode="wait">
-        <motion.main
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          {children}
-        </motion.main>
-      </AnimatePresence>
+      <main>
+        {children}
+      </main>
     </div>
   );
 }

@@ -69,9 +69,9 @@ export default function AdminDashboard() {
           boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
           border: '1px solid #e2e8f0'
         }}>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#0f172a' }}>Banners e Imagen</h2>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#0f172a' }}>Hero Carousel</h2>
           <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '2rem' }}>
-            Actualiza los títulos y mensajes de la sección principal del portal (Hero) según las prioridades del día.
+            Gestiona los slides de la página principal, define layouts (split, video, imagen) y activa efectos premium (Matrix, Pulse).
           </p>
           <a href="/admin/banners" style={{ 
             display: 'inline-block', 
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
             fontSize: '0.9rem',
             fontWeight: 600
           }}>
-            Editar Banners
+            Administrar Hero
           </a>
         </div>
 

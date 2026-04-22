@@ -7,6 +7,12 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .page {
+    padding: 100px 1.25rem 5rem;
+  }
+}
+
 /* Premium Mesh Gradient Background */
 .page::before {
   content: "";
@@ -36,8 +42,8 @@
 
 .heroTitle {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  line-height: 1;
+  font-size: clamp(1.8rem, 5vw, 4.5rem);
+  line-height: 1.1;
   letter-spacing: -0.05em;
   margin-bottom: 1.5rem;
   color: #fff;
@@ -264,6 +270,17 @@
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
 }
 
+@media (max-width: 768px) {
+  .featurePanel {
+    padding: 1.5rem 1.25rem;
+    border-radius: 16px;
+  }
+  
+  .featurePrice {
+    font-size: 2rem !important;
+  }
+}
+
 .featureHead {
   display: flex;
   flex-wrap: wrap;
@@ -308,7 +325,15 @@
   background: rgba(255, 255, 255, 0.04);
   border-radius: 100px;
   width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tabContainer::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -333,7 +358,7 @@
 /* --- News Feed ------------------------------------------------------------ */
 .newsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 

@@ -19,7 +19,7 @@ export function Skeleton({ width = '100%', height = '20px', borderRadius = '4px'
         width, 
         height, 
         borderRadius, 
-        backgroundColor: 'rgba(0, 0, 0, 0.05)', 
+        backgroundColor: 'rgba(255, 255, 255, 0.06)', 
         position: 'relative', 
         overflow: 'hidden',
         ...style
@@ -29,7 +29,7 @@ export function Skeleton({ width = '100%', height = '20px', borderRadius = '4px'
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%)',
           zIndex: 1,
         }}
         animate={{
@@ -47,7 +47,7 @@ export function Skeleton({ width = '100%', height = '20px', borderRadius = '4px'
 
 export function CardSkeleton() {
   return (
-    <div style={{ padding: '2rem', background: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '16px' }}>
+    <div style={{ padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '16px' }}>
       <Skeleton width="40%" height="12px" borderRadius="10px" style={{ opacity: 0.5 }} />
       <div style={{ marginTop: '1.2rem' }}>
         <Skeleton width="100%" height="24px" borderRadius="4px" />
@@ -82,7 +82,7 @@ export function BannerSkeleton() {
       justifyContent: 'center', 
       alignItems: 'center', 
       padding: '0 5%',
-      backgroundColor: '#f8fafc' 
+      backgroundColor: 'var(--color-primary-container)' 
     }}>
       <Skeleton width="180px" height="14px" borderRadius="10px" style={{ marginBottom: '2.5rem', opacity: 0.3 }} />
       <Skeleton width="70%" height="80px" borderRadius="12px" style={{ marginBottom: '1.5rem' }} />
@@ -103,7 +103,7 @@ export function BannerSkeleton() {
 export function CalendarSkeleton() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '2rem', width: '100%', minHeight: '500px' }}>
-      <div style={{ background: 'rgba(0,0,0,0.02)', borderRadius: '32px', padding: '3rem', border: '1px solid rgba(0,0,0,0.05)' }}>
+      <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: '32px', padding: '3rem', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3rem' }}>
           <div>
             <Skeleton width="150px" height="28px" />
@@ -119,7 +119,7 @@ export function CalendarSkeleton() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <Skeleton width="150px" height="24px" />
         {[1, 2, 3].map(i => (
-          <div key={i} style={{ padding: '1.5rem', background: 'white', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.03)' }}>
+          <div key={i} style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <Skeleton width="50px" height="50px" borderRadius="12px" />
               <div style={{ flex: 1 }}>

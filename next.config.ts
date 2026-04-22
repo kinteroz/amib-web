@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'bqwcfjxtmbgjynoscxjx.supabase.co',
+      },
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

@@ -49,8 +49,9 @@ async function NewsTicker() {
   );
 }
 
+import { HeroCarousel } from '@/components/ui/branding/hero/HeroCarousel';
+
 async function BannerSection({ query }: { query?: string }) {
-  const t = await getTranslations('HomePage');
   const supabase = await createClient();
 
   const { data } = await supabase
@@ -59,60 +60,22 @@ async function BannerSection({ query }: { query?: string }) {
     .eq('activo', true)
     .order('orden', { ascending: true });
 
-  const activeBanner = (data?.[0] as unknown as Banner) || null;
+  const banners = (data || []) as Banner[];
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <div className={styles.fullBleedHero} style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0 }}>
-        <MarketMatrix />
-        <div className={styles.grainOverlay} />
-        <MarketPulse />
-
-        {/* Contenido centrado */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '1400px', margin: '0 auto', justifyContent: 'center', zIndex: 10, padding: '130px 5% 0 5%' }}>
-          <ScrollReveal yOffset={30} delay={0.1}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '2.5rem' }}>
-              <span style={{ color: 'var(--color-secondary-container)', fontWeight: 600, letterSpacing: '0.3em', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
-                {activeBanner?.subtitulo || "Autoridad Bursátil de México"}
-              </span>
-              <h1 style={{ 
-                fontSize: 'clamp(2.5rem, 6.5vw, 4.8rem)', 
-                lineHeight: 1.1, 
-                fontWeight: 800,
-                letterSpacing: '-0.04em',
-                marginBottom: '2rem'
-              }}>
-                {activeBanner?.titulo || t('title')}
-              </h1>
-            </div>
-          </ScrollReveal>
-  
-          {/* Pilares Institucionales */}
-          <ScrollReveal yOffset={60} delay={0.3}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', width: '100%', paddingBottom: '2rem' }}>
-              <div className={styles.premiumCard} style={{ padding: '1.5rem', borderRadius: '16px' }}>
-                <h3 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.4rem', fontWeight: 800 }}>Autorregulación</h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', lineHeight: 1.4 }}>Garantizamos integridad y competencia con normativas robustas y supervisión proactiva.</p>
-              </div>
-              <div className={styles.premiumCard} style={{ padding: '1.5rem', borderRadius: '16px' }}>
-                <h3 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.4rem', fontWeight: 800 }}>Educación Financiera</h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', lineHeight: 1.4 }}>Programas especializados para elevar el conocimiento técnico y cultivar profesionales.</p>
-              </div>
-              <div className={styles.premiumCard} style={{ padding: '1.5rem', borderRadius: '16px' }}>
-                <h3 style={{ color: 'white', fontSize: '1.1rem', marginBottom: '0.4rem', fontWeight: 800 }}>Confianza y Ética</h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', lineHeight: 1.4 }}>Fomentamos las mejores prácticas globales alineadas con BMV, BIVA y autoridades.</p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-
-        {/* Barra de Indicadores */}
-        <div style={{ width: '100%', zIndex: 20 }}>
-          <MarketBar />
-        </div>
-
-        {/* Difuminado inferior */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '20vh', background: 'linear-gradient(to top, var(--color-primary-container), transparent)', zIndex: 11, pointerEvents: 'none' }} />
+    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', overflow: 'hidden' }}>
+      <HeroCarousel banners={banners} />
+      
+      {/* Static MarketBar overlay at the bottom of the Hero area */}
+      <div style={{ 
+        position: 'absolute', 
+        bottom: 0, 
+        left: 0, 
+        right: 0, 
+        zIndex: 20,
+        background: 'linear-gradient(to top, var(--color-primary), transparent)'
+      }}>
+        <MarketBar />
       </div>
     </div>
   );

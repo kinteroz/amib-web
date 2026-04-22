@@ -45,25 +45,29 @@ export default async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // 4. Protección de rutas administrativas
-  // Detectar si estamos en una ruta /admin (considerando el localeprefix /es/admin o /en/admin)
-  const isAdminPath = pathname.match(/\/(es|en)\/admin/);
-  const isLoginPath = pathname.match(/\/(es|en)\/login/);
+  // 4. Protección de rutas
+  const isAdminPath  = pathname.match(/\/(es|en)\/admin/);
+  const isPortalPath = pathname.match(/\/(es|en)\/asociados\/portal/);
+  const isLoginPath  = pathname.match(/\/(es|en)\/login/);
 
-  if (isAdminPath && !user) {
-    // Redirigir a login si no hay sesión
-    const locale = pathname.split('/')[1] || 'es';
+  const locale = pathname.split('/')[1] || 'es';
+
+  // Rutas protegidas — redirigir a login si no hay sesión
+  if ((isAdminPath || isPortalPath) && !user) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/login`;
+    if (isPortalPath) {
+      url.searchParams.set('redirect', pathname);
+    }
     return NextResponse.redirect(url);
   }
 
+  // Si ya hay sesión y está en login, redirigir al portal o admin
   if (isLoginPath && user) {
-      // Redirigir a admin si ya hay sesión
-      const locale = pathname.split('/')[1] || 'es';
-      const url = request.nextUrl.clone();
-      url.pathname = `/${locale}/admin`;
-      return NextResponse.redirect(url);
+    const url = request.nextUrl.clone();
+    const redirectTo = request.nextUrl.searchParams.get('redirect');
+    url.pathname = redirectTo ?? `/${locale}/asociados/portal/dashboard`;
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

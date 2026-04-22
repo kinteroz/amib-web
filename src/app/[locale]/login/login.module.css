@@ -1,30 +1,50 @@
-/* src/app/[locale]/login/login.module.css */
+/* ============================================================
+   Login Institucional — Diseño alineado al sistema AMIB
+   Fondo oscuro (azul marino) + dorado como accent
+   ============================================================ */
+
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 100vh;
   width: 100%;
-  background: #fff;
+  background: var(--color-primary, #0a1628);
   overflow: hidden;
 }
 
+/* ── Columna Izquierda: Branding ────────────────────────── */
 .leftColumn {
   position: relative;
-  background: #0a1628;
+  background: linear-gradient(160deg, #0d1f3c 0%, #0a1628 50%, #002048 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 10%;
   color: white;
   overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .brandVisual {
   position: absolute;
   inset: 0;
   z-index: 1;
-  opacity: 0.15;
+  opacity: 0.08;
   pointer-events: none;
+}
+
+/* Glow sutil en esquina superior derecha */
+.leftColumn::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(234, 171, 0, 0.12), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .leftContent {
@@ -33,12 +53,13 @@
 }
 
 .tagline {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.35em;
   color: var(--color-secondary-container, #EAAB00);
   margin-bottom: 2rem;
   font-weight: 700;
+  opacity: 0.9;
 }
 
 .brandingTitle {
@@ -46,7 +67,8 @@
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #fff;
 }
 
 .brandingSub {
@@ -59,26 +81,41 @@
 }
 
 .divider {
-  width: 60px;
-  height: 4px;
+  width: 48px;
+  height: 3px;
   background: var(--color-secondary-container, #EAAB00);
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.7;
 }
 
 .description {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  opacity: 0.7;
-  max-width: 480px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 400px;
 }
 
+/* ── Columna Derecha: Formulario ────────────────────────── */
 .rightColumn {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 5%;
-  background: #f8fafc;
+  /* Fondo oscuro ligeramente más claro para distinguir columnas */
+  background: #0d1e38;
+  position: relative;
+}
+
+/* Línea decorativa vertical */
+.rightColumn::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  bottom: 20%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(234, 171, 0, 0.15), transparent);
 }
 
 .formWrapper {
@@ -91,18 +128,20 @@
 }
 
 .formTitle {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #fff;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .formSubtitle {
-  font-size: 0.95rem;
-  color: #64748b;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.6;
 }
 
+/* ── Inputs ─────────────────────────────────────────────── */
 .inputGroup {
   margin-bottom: 1.5rem;
 }
@@ -115,20 +154,27 @@
 }
 
 .label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #475569;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .recoverLink {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #b45309;
+  color: var(--color-secondary-container, #EAAB00);
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.recoverLink:hover {
+  opacity: 1;
 }
 
 .inputWrapper {
@@ -140,50 +186,67 @@
 .inputIcon {
   position: absolute;
   left: 1rem;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.25);
 }
 
 .input {
   width: 100%;
   padding: 1rem 1rem 1rem 3rem;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  font-size: 1rem;
-  color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.95rem;
+  color: #fff;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
 }
 
 .input:focus {
-  border-color: #0f172a;
-  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
+  border-color: rgba(234, 171, 0, 0.45);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 4px rgba(234, 171, 0, 0.06);
 }
 
 .passwordToggle {
   position: absolute;
   right: 1rem;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
 }
 
+.passwordToggle:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Botón Principal ────────────────────────────────────── */
 .submitButton {
   width: 100%;
-  background: #0f172a;
-  color: white;
-  padding: 1.25rem;
+  background: var(--color-secondary-container, #EAAB00);
+  color: #0a1628;
+  padding: 1.1rem;
   border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   border: none;
   cursor: pointer;
   margin-top: 2rem;
-  transition: transform 0.2s, background 0.2s;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
 .submitButton:hover {
-  background: #1e293b;
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(234, 171, 0, 0.25);
 }
 
 .submitButton:active {
@@ -191,46 +254,53 @@
 }
 
 .submitButton:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* ── Aviso de Confidencialidad ─────────────────────────── */
 .confidentialityBox {
-  margin-top: 3rem;
-  padding: 1.5rem;
-  background: #f1f5f9;
-  border-radius: 16px;
+  margin-top: 2.5rem;
+  padding: 1.25rem;
+  background: rgba(234, 171, 0, 0.04);
+  border-radius: 12px;
   display: flex;
-  gap: 1rem;
-  border: 1px solid #e2e8f0;
+  gap: 0.875rem;
+  border: 1px solid rgba(234, 171, 0, 0.12);
 }
 
 .warningIcon {
-  color: #b45309;
+  color: var(--color-secondary-container, #EAAB00);
   flex-shrink: 0;
-  margin-top: 0.2rem;
+  margin-top: 0.1rem;
+  opacity: 0.7;
 }
 
 .confidentialityText {
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: #475569;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .confidentialityText strong {
-  color: #0f172a;
+  color: rgba(255, 255, 255, 0.6);
   display: block;
   margin-bottom: 0.25rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
+/* ── Footer del Formulario ──────────────────────────────── */
 .footer {
   margin-top: auto;
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 2rem 0;
-  font-size: 0.75rem;
-  color: #94a3b8;
+  padding: 2rem 0 0;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.2);
 }
 
 .footerLinks {
@@ -238,11 +308,36 @@
   gap: 1.5rem;
 }
 
+/* ── Mensaje de Error ───────────────────────────────────── */
+.errorMessage {
+  background: rgba(255, 68, 58, 0.08);
+  border: 1px solid rgba(255, 68, 58, 0.2);
+  color: #ff9f9a;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .container {
     grid-template-columns: 1fr;
   }
   .leftColumn {
     display: none;
+  }
+  .rightColumn::before {
+    display: none;
+  }
+  .rightColumn {
+    background: #0a1628;
+  }
+}
+
+@media (max-width: 480px) {
+  .rightColumn {
+    padding: 2rem 1.5rem;
   }
 }
