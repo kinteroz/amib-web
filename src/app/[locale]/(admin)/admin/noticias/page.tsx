@@ -215,9 +215,30 @@ export default function AdminNoticias() {
               </div>
 
               <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
+                <style dangerouslySetInnerHTML={{ __html: `
+                  .admin-responsive-grid {
+                    display: grid !important;
+                    grid-template-columns: 1.5fr 1fr;
+                  }
+                  @media (max-width: 1024px) {
+                    .admin-responsive-grid {
+                      grid-template-columns: 1fr !important;
+                      padding: 1.25rem !important;
+                    }
+                    .admin-header-actions {
+                      flex-direction: column;
+                      gap: 1rem;
+                      align-items: stretch !important;
+                    }
+                    .admin-title-row {
+                      flex-direction: column;
+                      gap: 0.5rem;
+                    }
+                  }
+                `}} />
                 {/* Main Form Area */}
                 {!previewMode ? (
-                  <div style={{ flex: 1, overflowY: 'auto', padding: '2.5rem', display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2.5rem' }}>
+                  <div className="admin-responsive-grid" style={{ flex: 1, overflowY: 'auto', padding: '2.5rem', gap: '2.5rem' }}>
                     <div style={{ display: 'grid', gap: '2rem' }}>
                       <section>
                         <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Cabecera y SEO</label>
