@@ -67,7 +67,7 @@ export function EventCountdownCard({ eventos = [], activeIndex }: EventCountdown
       className={styles.eventCardContent}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{ position: 'relative', width: '100%' }}
+      style={{ position: 'relative', width: '100%', height: '100%' }}
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -85,15 +85,33 @@ export function EventCountdownCard({ eventos = [], activeIndex }: EventCountdown
         />
       </AnimatePresence>
 
-      {/* Gradient overlay */}
+      {/* Gradient overlay — heavy on the left for text legibility */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to right, rgba(0,20,45,0.97) 0%, rgba(0,20,45,0.75) 60%, rgba(0,20,45,0.3) 100%)',
+        background: 'linear-gradient(to right, rgba(0,10,30,0.98) 0%, rgba(0,10,30,0.82) 45%, rgba(0,10,30,0.35) 75%, rgba(0,10,30,0.0) 100%)',
         zIndex: 1
       }} />
 
-      {/* Content */}
-      <div className={styles.eventCardInner} style={{ minHeight: '350px' }}>
+      {/* Top fade — dissolves from hero above */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        height: '18%',
+        background: 'linear-gradient(to bottom, var(--color-primary) 0%, transparent 100%)',
+        zIndex: 2,
+        pointerEvents: 'none'
+      }} />
+
+      {/* Bottom fade — cinematic dissolve into next section */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        height: '30%',
+        background: 'linear-gradient(to top, var(--color-primary) 0%, rgba(0,10,30,0.6) 60%, transparent 100%)',
+        zIndex: 2,
+        pointerEvents: 'none'
+      }} />
+
+      {/* Content — above fade overlays */}
+      <div className={styles.eventCardInner} style={{ zIndex: 3 }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={`content-${currentEvent.id}`}

@@ -328,38 +328,49 @@
   }
 }
 
-/* Event Countdown Card: responsive padding & font */
+/* Event Countdown Card: full-bleed cinematic hero */
 .eventCardInner {
   position: relative;
   z-index: 2;
-  max-width: 600px;
+  max-width: 680px;
+  padding-left: clamp(1.5rem, 6vw, 5rem);
 }
 
 .eventCardTitle {
-  font-size: clamp(1.8rem, 6vw, 3.5rem);
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.05;
   margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.4);
 }
 
 .eventCardContent {
   position: relative;
-  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 40px 60px -10px rgba(0, 15, 30, 0.4);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 3rem;
-  min-height: 400px;
+  padding: clamp(2rem, 5vh, 6rem) 0; /* vertical breathing room */
+  height: 100%;
+  min-height: calc(100vh - 80px); /* fallback if height:100% doesn't resolve */
   color: white;
   background-color: var(--color-primary-container);
+  /* Full bleed — no border radius, no shadow that clips */
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
 }
 
 @media (max-width: 700px) {
+  .eventCardInner {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
   .eventCardContent {
-    padding: 2rem 1.5rem;
-    min-height: 320px;
+    min-height: 100svh;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 }
 
@@ -481,13 +492,13 @@
 
 .scrollProgressIndicator {
   position: absolute;
-  right: 2rem;
+  right: 2.5rem;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  z-index: 50;
+  z-index: 10;
 }
 
 @media (max-width: 1024px) {

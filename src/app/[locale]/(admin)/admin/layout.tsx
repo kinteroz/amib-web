@@ -21,6 +21,10 @@ export default async function AdminLayout({
     redirect(`/${locale}/login`);
   }
 
+  if (user.user_metadata?.role !== 'admin') {
+    redirect(`/${locale}/asociados/portal/dashboard`);
+  }
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       {/* Admin Sidebar */}
@@ -80,15 +84,27 @@ export default async function AdminLayout({
               </Link>
             </li>
             <li style={{ marginBottom: '0.5rem' }}>
-              <Link href={`/${locale}/admin/eventos`} style={{ 
-                display: 'block', 
-                padding: '0.8rem 1rem', 
-                borderRadius: '8px', 
-                color: 'rgba(255,255,255,0.7)', 
+              <Link href={`/${locale}/admin/eventos`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
                 textDecoration: 'none',
                 fontSize: '0.9rem'
               }}>
                 Eventos
+              </Link>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/usuarios`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Usuarios
               </Link>
             </li>
           </ul>

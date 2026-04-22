@@ -151,7 +151,7 @@ export default function BannersAdmin() {
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button 
                 onClick={() => setEditingBanner(banner)}
-                style={{ padding: '0.5rem 1rem', border: '1px solid #e2e8f0', borderRadius: '6px', background: 'white', cursor: 'pointer' }}
+                style={{ padding: '0.5rem 1rem', border: '1px solid #e2e8f0', borderRadius: '6px', background: 'white', color: '#475569', fontWeight: 600, cursor: 'pointer' }}
               >
                 Editar
               </button>
@@ -383,7 +383,7 @@ export default function BannersAdmin() {
                    <button 
                     type="button" 
                     onClick={() => setEditingBanner(null)}
-                    style={{ padding: '0.75rem 2rem', border: '1px solid #e2e8f0', borderRadius: '8px', background: 'white', fontWeight: 600, cursor: 'pointer' }}
+                    style={{ padding: '0.75rem 2rem', border: '1px solid #e2e8f0', borderRadius: '8px', background: 'white', color: '#475569', fontWeight: 600, cursor: 'pointer' }}
                    >
                     Cancelar
                    </button>

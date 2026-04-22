@@ -5,10 +5,9 @@ import { motion } from 'framer-motion';
 import { login } from '@/lib/auth-actions';
 import { MarketMatrix } from '@/components/ui/branding/MarketMatrix';
 import loginStyles from './login.module.css';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 export default function LoginPage() {
-  const router = useRouter();
   const { locale } = useParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,12 +21,14 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await login(email, password);
-      router.push(`/${locale || 'es'}/asociados/portal/dashboard`);
+      const { role } = await login(email, password);
+      // Navegación completa (no SPA push) para que el middleware
+      // lea las cookies de sesión recién escritas sin condición de carrera.
+      const base = `/${locale || 'es'}`;
+      window.location.href = role === 'admin' ? `${base}/admin` : `${base}/asociados/portal/dashboard`;
     } catch (err: any) {
-      setError(err.message || 'Credenciales inválidas. Verifica tu correo e institucional y contraseña.');
-    } finally {
       setLoading(false);
+      setError(err.message || 'Credenciales inválidas. Verifica tu correo e institucional y contraseña.');
     }
   };
 

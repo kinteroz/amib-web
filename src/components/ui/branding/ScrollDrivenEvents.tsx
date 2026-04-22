@@ -33,7 +33,7 @@ export function ScrollDrivenEvents({ eventos }: ScrollDrivenEventsProps) {
     const rect = spacerRef.current.getBoundingClientRect();
     const containerHeight = spacerRef.current.offsetHeight;
     const viewportHeight = window.innerHeight;
-    const stickyTopOffset = 120; // Aligned with header/layout spacing
+  const stickyTopOffset = 80; // header height only
     
     // 1. Determine Sticky Mode (Manual sticky implementation)
     if (rect.top > stickyTopOffset) {
@@ -76,19 +76,18 @@ export function ScrollDrivenEvents({ eventos }: ScrollDrivenEventsProps) {
 
   // Manual styles based on stickyMode
   const getStickyStyles = (): React.CSSProperties => {
-    if (!mounted || isMobile) return { width: '100%' };
+    if (!mounted || isMobile) return { width: '100%', minHeight: '100svh' };
 
     switch (stickyMode) {
       case 'fixed':
         return {
           position: 'fixed',
-          top: '120px',
+          top: '80px',
           left: 0,
           right: 0,
-          height: 'calc(100vh - 120px)',
+          height: 'calc(100vh - 80px)',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: 'stretch', // stretch so card fills full height
           zIndex: 50,
         };
       case 'bottom':
@@ -97,10 +96,9 @@ export function ScrollDrivenEvents({ eventos }: ScrollDrivenEventsProps) {
           bottom: 0,
           left: 0,
           right: 0,
-          height: 'calc(100vh - 120px)',
+          height: 'calc(100vh - 80px)',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: 'stretch',
         };
       case 'top':
       default:
@@ -109,10 +107,9 @@ export function ScrollDrivenEvents({ eventos }: ScrollDrivenEventsProps) {
           top: 0,
           left: 0,
           right: 0,
-          height: 'calc(100vh - 120px)',
+          height: 'calc(100vh - 80px)',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: 'stretch',
         };
     }
   };
@@ -124,18 +121,18 @@ export function ScrollDrivenEvents({ eventos }: ScrollDrivenEventsProps) {
         position: 'relative',
         height: spacerHeight,
         width: '100%',
-        marginBottom: isMobile ? '2rem' : '4rem',
-        // Ensure no transform on ancestors that might break 'fixed'
+        marginBottom: isMobile ? '0' : '0', // no margin — let next section handle spacing
       }}
     >
       <div style={getStickyStyles()}>
-        <div style={{ width: '95%', maxWidth: '1400px', margin: '0 auto', position: 'relative' }}>
+        {/* Full-bleed fullscreen: height 100% propagates to EventCountdownCard */}
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
           <EventCountdownCard
             eventos={eventos}
             activeIndex={mounted && !isMobile ? activeIndex : undefined}
           />
 
-          {/* Vertical progress dots — desktop only */}
+          {/* Vertical progress dots — desktop only, fixed via CSS */}
           {mounted && !isMobile && eventos.length > 1 && (
             <div className={styles.scrollProgressIndicator}>
               {eventos.map((ev, i) => (

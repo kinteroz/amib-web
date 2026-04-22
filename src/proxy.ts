@@ -16,7 +16,14 @@ export default async function middleware(request: NextRequest) {
   // 2. Manejar el ruteo de internacionalización
   const response = intlMiddleware(request);
 
-  // 2. Crear el cliente de Supabase para actualizar la sesión
+  // Si next-intl ya decidió redirigir (p.ej. / → /es) o reescribir,
+  // devolverlo tal cual. Si seguimos, Supabase puede pisar la respuesta
+  // al refrescar cookies (setAll recrea NextResponse.next) y el redirect se pierde.
+  if (response.headers.get('location') || response.headers.get('x-middleware-rewrite')) {
+    return response;
+  }
+
+  // 3. Crear el cliente de Supabase para actualizar la sesión
   let supabaseResponse = response;
 
   const supabase = createServerClient(
@@ -51,22 +58,40 @@ export default async function middleware(request: NextRequest) {
   const isLoginPath  = pathname.match(/\/(es|en)\/login/);
 
   const locale = pathname.split('/')[1] || 'es';
+  const role = user?.user_metadata?.role as string | undefined;
 
-  // Rutas protegidas — redirigir a login si no hay sesión
+  if (process.env.NODE_ENV === 'development' && (isAdminPath || isPortalPath)) {
+    console.log('[middleware]', { pathname, userId: user?.id, role });
+  }
+
+  // Sin sesión → redirigir a login
   if ((isAdminPath || isPortalPath) && !user) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/login`;
-    if (isPortalPath) {
-      url.searchParams.set('redirect', pathname);
-    }
+    if (isPortalPath) url.searchParams.set('redirect', pathname);
     return NextResponse.redirect(url);
   }
 
-  // Si ya hay sesión y está en login, redirigir al portal o admin
+  // Con sesión pero sin rol admin en rutas de admin → redirigir al portal
+  if (isAdminPath && user && role !== 'admin') {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/asociados/portal/dashboard`;
+    return NextResponse.redirect(url);
+  }
+
+  // El portal solo requiere sesión activa; el rol se valida dentro de cada sección.
+
+  // Con sesión en login → redirigir según rol
   if (isLoginPath && user) {
     const url = request.nextUrl.clone();
     const redirectTo = request.nextUrl.searchParams.get('redirect');
-    url.pathname = redirectTo ?? `/${locale}/asociados/portal/dashboard`;
+    if (redirectTo) {
+      url.pathname = redirectTo;
+    } else if (role === 'admin') {
+      url.pathname = `/${locale}/admin`;
+    } else {
+      url.pathname = `/${locale}/asociados/portal/dashboard`;
+    }
     return NextResponse.redirect(url);
   }
 

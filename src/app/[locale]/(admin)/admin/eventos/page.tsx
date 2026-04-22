@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database.types';
 import Link from 'next/link';
+import { revalidatePortal } from '@/lib/admin-revalidate';
 
 export default function AdminEventos() {
   const [eventos, setEventos] = useState<any[]>([]);
@@ -31,7 +32,7 @@ export default function AdminEventos() {
       .update({ activo: !currentState })
       .eq('id', id);
 
-    if (!error) fetchEventos();
+    if (!error) { await revalidatePortal(); fetchEventos(); }
     else console.error(error);
   };
 
@@ -97,15 +98,33 @@ export default function AdminEventos() {
                   </span>
                 </td>
                 <td style={{ padding: '1.25rem' }}>
-                  <span style={{ 
-                    fontSize: '0.75rem', 
-                    padding: '0.25rem 0.5rem', 
-                    borderRadius: '4px', 
-                    background: evento.activo ? '#dcfce7' : '#f1f5f9',
-                    color: evento.activo ? '#166534' : '#475569'
-                  }}>
-                    {evento.activo ? 'Activo / Visible' : 'Archivado'}
-                  </span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <span style={{ 
+                        fontSize: '0.75rem', 
+                        padding: '0.25rem 0.5rem', 
+                        borderRadius: '4px', 
+                        background: evento.activo ? '#dcfce7' : '#f1f5f9',
+                        color: evento.activo ? '#166534' : '#475569',
+                        width: 'fit-content'
+                    }}>
+                        {evento.activo ? 'Activo / Visible' : 'Archivado'}
+                    </span>
+                    {evento.es_destacado && (
+                        <span style={{ 
+                            fontSize: '0.65rem', 
+                            padding: '0.15rem 0.4rem', 
+                            borderRadius: '4px', 
+                            background: '#fefce8',
+                            color: '#854d0e',
+                            border: '1px solid #fde047',
+                            fontWeight: 700,
+                            width: 'fit-content',
+                            textTransform: 'uppercase'
+                        }}>
+                            ⭐ Destacado (Slider)
+                        </span>
+                    )}
+                  </div>
                 </td>
                 <td style={{ padding: '1.25rem', display: 'flex', gap: '0.5rem' }}>
                   <button 

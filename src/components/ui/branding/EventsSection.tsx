@@ -44,22 +44,16 @@ export async function EventsSection() {
 export async function UpcomingEventSection() {
   const supabase = await createClient();
 
-  const { data: eventosData } = await supabase
+  const { data: sliderEvents } = await supabase
     .from('eventos')
     .select('*')
     .eq('activo', true)
-    .order('fecha_inicio', { ascending: true });
+    .eq('es_destacado', true)
+    .gte('fecha_inicio', new Date().toISOString())
+    .order('fecha_inicio', { ascending: true })
+    .limit(3);
 
-  const eventos = eventosData || [];
-  const now = new Date().toISOString();
-  
-  const highlightedEvents = eventos.filter(e => e.es_destacado && e.fecha_inicio > now);
-  const otherUpcoming = eventos.filter(e => !e.es_destacado && e.fecha_inicio > now);
-  
-  // Combine highlighted first, then others, limit to 3 slides max
-  const sliderEvents = [...highlightedEvents, ...otherUpcoming].slice(0, 3);
-
-  if (sliderEvents.length === 0) {
+  if (!sliderEvents || sliderEvents.length === 0) {
     return null;
   }
 

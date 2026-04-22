@@ -87,6 +87,32 @@ export default function AdminDashboard() {
           </a>
         </div>
 
+        {/* Users Card */}
+        <div style={{
+          background: 'white',
+          padding: '2rem',
+          borderRadius: '16px',
+          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
+          border: '1px solid #e2e8f0'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#0f172a' }}>Gestión de Usuarios</h2>
+          <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '2rem' }}>
+            Crea y administra los accesos al portal. Asigna roles (Admin CMS o Asociado) e instituciones desde un solo lugar.
+          </p>
+          <a href="/admin/usuarios" style={{
+            display: 'inline-block',
+            padding: '0.75rem 1.5rem',
+            background: '#001F3F',
+            color: 'white',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontSize: '0.9rem',
+            fontWeight: 600
+          }}>
+            Administrar Usuarios
+          </a>
+        </div>
+
         {/* Events CMS Card */}
         <div style={{ 
           background: 'white', 

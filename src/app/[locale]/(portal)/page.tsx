@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { InteractiveSpotlightBackground } from '@/components/ui/animations/InteractiveSpotlightBackground';
 import { ScrollReveal } from '@/components/ui/animations/ScrollReveal';
 import { CardSkeleton, Skeleton, BannerSkeleton, NewsGridSkeleton, CalendarSkeleton } from '@/components/ui/animations/Skeleton';
@@ -95,7 +96,7 @@ async function NewsSection({ query }: { query?: string }) {
 
   const { data } = await newsQuery
     .order('fecha_publicacion', { ascending: false })
-    .limit(4);
+    .limit(6);
 
   const noticias = (data || []) as Noticia[];
 
@@ -112,32 +113,85 @@ async function NewsSection({ query }: { query?: string }) {
             </h2>
           </div>
           {!query && (
-            <a href="#" style={{ color: 'var(--color-primary-container)', fontWeight: 600, borderBottom: '2px solid var(--color-secondary-container)' }}>
+            <Link href="/noticias" style={{ color: 'var(--color-secondary-container)', fontWeight: 600, borderBottom: '2px solid var(--color-secondary-container)' }}>
               Ver todas
-            </a>
+            </Link>
           )}
         </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
           {noticias.length > 0 ? (
-            noticias.map((noticia) => (
-              <div key={noticia.id} className={styles.premiumCard} style={{ 
-                padding: '2rem', 
-                borderRadius: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%'
-              }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--color-secondary-container)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                  {noticia.categoria || 'General'}
-                </span>
-                <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem', lineHeight: 1.3, color: 'white' }}>{noticia.titulo}</h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', flex: 1 }}>{noticia.resumen}</p>
-                <div style={{ marginTop: '1.5rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span>📅</span>
-                  {noticia.fecha_publicacion ? new Date(noticia.fecha_publicacion).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
+            (noticias as any[]).map((noticia) => (
+              <Link
+                key={noticia.id}
+                href={`/noticias/${noticia.slug}`}
+                className={styles.premiumCard}
+                style={{
+                  borderRadius: '24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                  overflow: 'hidden',
+                  textDecoration: 'none',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  transition: 'transform 0.3s ease, border-color 0.3s ease',
+                }}
+              >
+                {/* Media Header */}
+                <div style={{ 
+                  position: 'relative', 
+                  width: '100%', 
+                  aspectRatio: '16/10', 
+                  background: 'linear-gradient(135deg, #001F3F 0%, #001226 100%)', 
+                  overflow: 'hidden' 
+                }}>
+                  {noticia.video_url ? (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ position: 'absolute', zIndex: 2, background: 'rgba(0,0,0,0.5)', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+                        <span style={{ color: 'white', marginLeft: '4px' }}>▶️</span>
+                      </div>
+                      {noticia.imagen_url && (
+                        <img 
+                          src={noticia.imagen_url} 
+                          alt="" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} 
+                        />
+                      )}
+                    </div>
+                  ) : noticia.imagen_url ? (
+                    <img 
+                      src={noticia.imagen_url} 
+                      alt="" 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover', 
+                        transition: 'transform 0.5s ease',
+                      }} 
+                    />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.02)' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.1)', fontWeight: 800, fontSize: '0.8rem', letterSpacing: '0.2em' }}>AMIB PRESS</span>
+                    </div>
+                  )}
+                  <div style={{ position: 'absolute', top: '1rem', left: '1rem', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.7rem', color: 'white', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {noticia.categoria || 'General'}
+                  </div>
                 </div>
-              </div>
+
+                <div style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem', lineHeight: 1.3, color: 'white', fontWeight: 800 }}>{noticia.titulo}</h3>
+                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', flex: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {noticia.resumen}
+                  </p>
+                  <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                     <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+                        {noticia.fecha_publicacion ? new Date(noticia.fecha_publicacion).toLocaleDateString('es-MX', { day: 'numeric', month: 'long' }) : ''}
+                      </div>
+                      <span style={{ color: 'var(--color-secondary-container)', fontWeight: 700, fontSize: '0.85rem' }}>Leer más →</span>
+                  </div>
+                </div>
+              </Link>
             ))
           ) : (
             <p>No se encontraron noticias con los criterios de búsqueda.</p>
@@ -204,7 +258,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         </Suspense>
 
         {/* Suspenses & Components Reordered */}
-        <div style={{ paddingTop: '6rem' }}> {/* Spacer to separate event from hero */}
+        <div style={{ paddingTop: '0' }}> {/* Full-bleed: event section flows directly from hero */}
           <Suspense fallback={<div style={{ height: '300px' }} />}>
             <UpcomingEventSection />
           </Suspense>
@@ -221,6 +275,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         }>
           <NewsSection query={q} />
         </Suspense>
+
 
         <Suspense fallback={
           <ScrollReveal yOffset={60}>
