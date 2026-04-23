@@ -50,14 +50,16 @@ export function Header() {
         right: 0,
         zIndex: 100,
         padding: isScrolled ? '0.75rem 2.5rem' : '1.25rem 2.5rem',
-        background: isScrolled ? 'rgba(255, 255, 255, 0.85)' : 'transparent',
+        background: isScrolled
+          ? 'rgba(255, 255, 255, 0.85)'
+          : 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
         backdropFilter: isScrolled ? 'blur(20px)' : 'none',
         WebkitBackdropFilter: isScrolled ? 'blur(20px)' : 'none',
         borderBottom: isScrolled ? '1px solid rgba(0, 0, 0, 0.05)' : 'none',
         display: 'grid',
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',
-        color: isScrolled ? 'var(--on-surface)' : 'var(--on-primary)',
+        color: isScrolled ? 'var(--on-surface)' : 'rgba(255,255,255,0.95)',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >

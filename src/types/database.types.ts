@@ -206,6 +206,159 @@ export interface Database {
           updated_at?: string
         }
       }
+      examenes_certificacion: {
+        Row: {
+          id: string
+          titulo: string
+          descripcion: string | null
+          fecha: string
+          hora: string | null
+          modalidad: 'presencial' | 'distancia' | 'ambas'
+          sede: string | null
+          cupo_maximo: number | null
+          url_registro: string | null
+          certificacion_id: string | null
+          activo: boolean
+          notas: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          titulo: string
+          descripcion?: string | null
+          fecha: string
+          hora?: string | null
+          modalidad?: 'presencial' | 'distancia' | 'ambas'
+          sede?: string | null
+          cupo_maximo?: number | null
+          url_registro?: string | null
+          certificacion_id?: string | null
+          activo?: boolean
+          notas?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          titulo?: string
+          descripcion?: string | null
+          fecha?: string
+          hora?: string | null
+          modalidad?: 'presencial' | 'distancia' | 'ambas'
+          sede?: string | null
+          cupo_maximo?: number | null
+          url_registro?: string | null
+          certificacion_id?: string | null
+          activo?: boolean
+          notas?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      documentos_cert: {
+        Row: {
+          id: string
+          titulo: string
+          descripcion: string | null
+          categoria: 'guia' | 'manual' | 'formato' | 'comunicado' | 'tarifa' | 'reglamento' | 'otro'
+          subcategoria: string | null
+          tipo_perfil: 'independiente' | 'institucion' | 'consar' | 'general'
+          storage_path: string | null
+          url_publica: string | null
+          orden: number
+          activo: boolean
+          fecha_publicacion: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          titulo: string
+          descripcion?: string | null
+          categoria?: 'guia' | 'manual' | 'formato' | 'comunicado' | 'tarifa' | 'reglamento' | 'otro'
+          subcategoria?: string | null
+          tipo_perfil?: 'independiente' | 'institucion' | 'consar' | 'general'
+          storage_path?: string | null
+          url_publica?: string | null
+          orden?: number
+          activo?: boolean
+          fecha_publicacion?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          titulo?: string
+          descripcion?: string | null
+          categoria?: 'guia' | 'manual' | 'formato' | 'comunicado' | 'tarifa' | 'reglamento' | 'otro'
+          subcategoria?: string | null
+          tipo_perfil?: 'independiente' | 'institucion' | 'consar' | 'general'
+          storage_path?: string | null
+          url_publica?: string | null
+          orden?: number
+          activo?: boolean
+          fecha_publicacion?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      micrositios_cert: {
+        Row: {
+          id: string
+          slug: string
+          titulo: string
+          subtitulo: string | null
+          descripcion: string | null
+          tipo: 'proceso' | 'guia' | 'faq' | 'referencia'
+          perfil_objetivo: 'independiente' | 'institucion' | 'consar' | 'general'
+          contenido_json: Json
+          documento_origen_id: string | null
+          imagen_cover: string | null
+          color_acento: string | null
+          icono: string | null
+          activo: boolean
+          orden: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          titulo: string
+          subtitulo?: string | null
+          descripcion?: string | null
+          tipo?: 'proceso' | 'guia' | 'faq' | 'referencia'
+          perfil_objetivo?: 'independiente' | 'institucion' | 'consar' | 'general'
+          contenido_json?: Json
+          documento_origen_id?: string | null
+          imagen_cover?: string | null
+          color_acento?: string | null
+          icono?: string | null
+          activo?: boolean
+          orden?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          titulo?: string
+          subtitulo?: string | null
+          descripcion?: string | null
+          tipo?: 'proceso' | 'guia' | 'faq' | 'referencia'
+          perfil_objetivo?: 'independiente' | 'institucion' | 'consar' | 'general'
+          contenido_json?: Json
+          documento_origen_id?: string | null
+          imagen_cover?: string | null
+          color_acento?: string | null
+          icono?: string | null
+          activo?: boolean
+          orden?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
       noticias: {
         Row: {
           categoria: string | null
