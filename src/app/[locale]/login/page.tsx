@@ -5,10 +5,11 @@ import { motion } from 'framer-motion';
 import { login } from '@/lib/auth-actions';
 import { MarketMatrix } from '@/components/ui/branding/MarketMatrix';
 import loginStyles from './login.module.css';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
   const { locale } = useParams();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,9 @@ export default function LoginPage() {
       // Navegación completa (no SPA push) para que el middleware
       // lea las cookies de sesión recién escritas sin condición de carrera.
       const base = `/${locale || 'es'}`;
-      window.location.href = role === 'admin' ? `${base}/admin` : `${base}/asociados/portal/dashboard`;
+      const redirectTo = searchParams.get('redirectTo');
+      const defaultDest = role === 'admin' ? `${base}/admin` : `${base}/asociados/portal/dashboard`;
+      window.location.href = redirectTo ?? defaultDest;
     } catch (err: any) {
       setLoading(false);
       setError(err.message || 'Credenciales inválidas. Verifica tu correo e institucional y contraseña.');

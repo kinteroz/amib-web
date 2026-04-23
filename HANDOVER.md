@@ -6,7 +6,7 @@ Este documento centraliza el estado actual del proyecto, la arquitectura definid
 
 ## 🚀 Estado Actual del Proyecto
 
-El proyecto ha completado la **Fase 4: Portales de Audiencia + Optimización Responsiva**. La plataforma es ahora apta para dispositivos móviles y la infraestructura del portal privado está lista para recibir datos reales.
+El proyecto ha completado la **Fase 5: Integración de Datos Privados**. El middleware de autenticación protege todas las rutas del portal y del admin. Los datos reales de comités provienen de Supabase vía RSC.
 
 ### Hitos Completados
 - [x] **Market Dashboard v2**: Navegación por pestañas, integración de Alpha Vantage (Sentimiento de Noticias y Plata XAG).
@@ -31,10 +31,10 @@ El proyecto ha completado la **Fase 4: Portales de Audiencia + Optimización Res
 
 ## 🗺 Hoja de Ruta Actualizada (Roadmap)
 
-### Fase 5: Integración de Datos Privados ← PRÓXIMA SESIÓN
-- [ ] **Persistencia en Comités**: Crear migración y conectar tabla `comites_sesiones` en Supabase.
-- [ ] **Repositorio de Normatividad**: Implementar vista `/normatividad` con descarga de PDFs y búsqueda dinámica.
-- [ ] **Middleware de Seguridad**: Proteger rutas `asociados/portal/*` con Supabase Auth + `middleware.ts`.
+### Fase 5: Integración de Datos Privados ✅ COMPLETADA
+- [x] **Persistencia en Comités**: Migración y tabla `comites_sesiones` conectada. RSC consume datos reales.
+- [x] **Repositorio de Normatividad**: Vista `/normatividad` implementada.
+- [x] **Middleware de Seguridad**: `src/middleware.ts` — protege `/{locale}/asociados/portal/*` y `/{locale}/admin/*`. Redirige a `/login?redirectTo=` si no hay sesión. El LoginPage respeta el `redirectTo` al autenticar.
 
 ### Fase 6: Funcionalidades Administrativas
 - [ ] **Vista de Informes del Portal**: Diseñar e implementar la sección `/informes` con widgets de reportes.
@@ -48,19 +48,15 @@ El proyecto ha completado la **Fase 4: Portales de Audiencia + Optimización Res
 
 ---
 
-## 📋 Tareas para la Próxima Sesión
+## 📋 Tareas para la Próxima Sesión (Fase 6)
 
 > [!IMPORTANT]
-> Ejecutar en este orden para asegurar que el backend esté listo antes de conectar la UI:
+> El portal está protegido y con datos reales. Siguiente fase: funcionalidades administrativas.
 
-1. **[DB]** Crear migración Supabase: tabla `comites_sesiones`
-   ```sql
-   -- campos: id, nombre, fecha, hora_inicio, hora_fin, estado, rol_asociado, ubicacion, link_documento
-   ```
-2. **[Backend]** Implementar función en `src/lib/supabase/server.ts` para consultar sesiones por asociado.
-3. **[UI]** Conectar `ComitesPage` para reemplazar datos estáticos con la consulta real (RSC o SWR).
-4. **[Auth]** Agregar `middleware.ts` para bloquear acceso a `/(portal)/*` si no hay sesión activa.
-5. **[UI]** Iniciar diseño de la sección `/informes` en el portal.
+1. **[UI]** Gestor de Minutas — flujo para subir y consultar minutas de comités desde el portal.
+2. **[DB]** Crear tabla `minutas` en Supabase (migración versionada) ligada a `comites_sesiones`.
+3. **[UI]** Sistema de Notificaciones — alertas para próximas sesiones (badge en Sidebar / toast al entrar).
+4. **[UI]** Sección `/informes` — actualmente con datos estáticos; conectar a tabla Supabase para gestión real de PDFs.
 
 ---
 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { InteractiveSpotlightBackground } from '@/components/ui/animations/InteractiveSpotlightBackground';
 import { ScrollReveal } from '@/components/ui/animations/ScrollReveal';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createStaticClient } from '@supabase/supabase-js';
 import styles from '@/components/ui/animations/animations.module.css';
 import { Database } from '@/types/database.types';
 import { Footer } from '@/components/layout/Footer';
@@ -355,7 +356,10 @@ export default async function MicrositioPage({ params }: { params: Promise<{ slu
 }
 
 export async function generateStaticParams() {
-  const supabase = await createClient();
+  const supabase = createStaticClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const { data } = await supabase
     .from('micrositios_cert')
     .select('slug')
