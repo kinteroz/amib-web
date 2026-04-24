@@ -13,6 +13,8 @@ El proyecto ha completado la **Fase 5: Integración de Datos Privados**. El midd
 - [x] **Portal Asociados (UI)**: Arquitectura de Sidebar/Topbar, Dashboard de bienvenida y Centro de Gestión de Comités (Frontend).
 - [x] **Institutional Login**: Rediseño a formato Split-Screen con branding "Bursátil Precision".
 - [x] **Optimización Mobile-First**: Menú Hamburguesa (Drawer), tabs con scroll horizontal, grillas y paddings adaptables.
+- [x] **SEO Dinámico & Friendly URLs**: Implementación de slugs para eventos y noticias, metadata dinámica y títulos institucionales.
+- [x] **Optimización de Media**: Migración total a `next/image` en Hero, Noticias y Eventos para mejorar LCP.
 
 ---
 
@@ -36,27 +38,45 @@ El proyecto ha completado la **Fase 5: Integración de Datos Privados**. El midd
 - [x] **Repositorio de Normatividad**: Vista `/normatividad` implementada.
 - [x] **Middleware de Seguridad**: `src/middleware.ts` — protege `/{locale}/asociados/portal/*` y `/{locale}/admin/*`. Redirige a `/login?redirectTo=` si no hay sesión. El LoginPage respeta el `redirectTo` al autenticar.
 
-### Fase 6: Funcionalidades Administrativas
-- [ ] **Vista de Informes del Portal**: Diseñar e implementar la sección `/informes` con widgets de reportes.
-- [ ] **Gestor de Minutas**: Flujo para subir y consultar minutas de comités desde el portal.
-- [ ] **Notificaciones**: Sistema de alertas para próximas sesiones críticas.
+### Fase 6: Funcionalidades Administrativas ✅ COMPLETADA
+- [x] **Vista de Informes del Portal**: Diseñar e implementar la sección `/informes` con widgets de reportes.
+- [x] **Gestor de Minutas**: Flujo para consultar minutas de comités desde el portal y base de datos.
+- [x] **Notificaciones**: Sistema de alertas para próximas sesiones críticas (badge y toast).
 
 ### Fase 7: Optimización & Despliegue
-- [ ] **SEO Técnico**: Meta-tags dinámicos por noticia/página.
-- [ ] **Performance**: Optimización de imágenes (Next/Image) y cargas diferidas.
+- [x] **SEO Técnico**: Meta-tags dinámicos por noticia/página.
+- [x] **Performance**: Optimización de imágenes (Next/Image) y cargas diferidas.
 - [ ] **CI/CD**: Configuración final para despliegue automático en Hostinger.
 
 ---
 
-## 📋 Tareas para la Próxima Sesión (Fase 6)
+## 🚀 Guía de Despliegue (Hostinger)
 
-> [!IMPORTANT]
-> El portal está protegido y con datos reales. Siguiente fase: funcionalidades administrativas.
+### 1. Requisitos Previos
+- **Node.js**: Versión 18.17 o superior (Recomendado 20+).
+- **Dominio**: Apuntando correctamente a Hostinger.
 
-1. **[UI]** Gestor de Minutas — flujo para subir y consultar minutas de comités desde el portal.
-2. **[DB]** Crear tabla `minutas` en Supabase (migración versionada) ligada a `comites_sesiones`.
-3. **[UI]** Sistema de Notificaciones — alertas para próximas sesiones (badge en Sidebar / toast al entrar).
-4. **[UI]** Sección `/informes` — actualmente con datos estáticos; conectar a tabla Supabase para gestión real de PDFs.
+### 2. Variables de Entorno
+Deben configurarse en el Panel de Hostinger (Sección Node.js > Variables de Entorno) o en un archivo `.env.production`:
+- `NEXT_PUBLIC_SUPABASE_URL`: URL del proyecto Supabase.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Key pública para cliente.
+- `SUPABASE_SERVICE_ROLE_KEY`: Key privada (Server-side solo).
+- `ALPHA_VANTAGE_KEY`: API para datos financieros.
+- `GROQ_API_KEY`: API para IA (Asistente AMIB).
+
+### 3. Comandos de Build
+Desde la terminal de Hostinger o via CI/CD:
+```bash
+npm install
+npm run build
+```
+
+### 4. Ejecución (PM2 Recomendado)
+Si tienes acceso a terminal (VPS), usa PM2 para mantener la app activa:
+```bash
+pm2 start npm --name "amib-web" -- start
+```
+Si usas el **Node.js App Installer** de Hostinger, asegúrate de que el "Application Startup File" sea `node_modules/next/dist/bin/next` o usa un `server.js` personalizado.
 
 ---
 

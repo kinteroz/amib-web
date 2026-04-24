@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { InteractiveSpotlightBackground } from '@/components/ui/animations/InteractiveSpotlightBackground';
 import { ScrollReveal } from '@/components/ui/animations/ScrollReveal';
 import { CardSkeleton, Skeleton, BannerSkeleton, NewsGridSkeleton, CalendarSkeleton } from '@/components/ui/animations/Skeleton';
@@ -152,20 +153,20 @@ async function NewsSection({ query }: { query?: string }) {
                         <span style={{ color: 'white', marginLeft: '4px' }}>▶️</span>
                       </div>
                       {noticia.imagen_url && (
-                        <img 
+                        <Image 
                           src={noticia.imagen_url} 
                           alt="" 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} 
+                          fill
+                          style={{ objectFit: 'cover', opacity: 0.6 }} 
                         />
                       )}
                     </div>
                   ) : noticia.imagen_url ? (
-                    <img 
+                    <Image 
                       src={noticia.imagen_url} 
-                      alt="" 
+                      alt={noticia.titulo} 
+                      fill
                       style={{ 
-                        width: '100%', 
-                        height: '100%', 
                         objectFit: 'cover', 
                         transition: 'transform 0.5s ease',
                       }} 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { login } from '@/lib/auth-actions';
+import { Link } from '@/i18n/routing';
 import { MarketMatrix } from '@/components/ui/branding/MarketMatrix';
 import loginStyles from './login.module.css';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -27,7 +28,7 @@ export default function LoginPage() {
       // lea las cookies de sesión recién escritas sin condición de carrera.
       const base = `/${locale || 'es'}`;
       const redirectTo = searchParams.get('redirectTo');
-      const defaultDest = role === 'admin' ? `${base}/admin` : `${base}/asociados/portal/dashboard`;
+      const defaultDest = role === 'admin' ? `${base}/admin` : `${base}/mi-cuenta/dashboard`;
       window.location.href = redirectTo ?? defaultDest;
     } catch (err: any) {
       setLoading(false);
@@ -144,6 +145,9 @@ export default function LoginPage() {
                 Toda la información contenida en este portal es de carácter estrictamente gremial y confidencial. El acceso no autorizado está prohibido y sujeto a regulación interna.
               </div>
             </div>
+            <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8' }}>
+              ¿Eres sustentante y no tienes cuenta? <Link href="/registro" style={{ color: '#EAAB00', fontWeight: 800, textDecoration: 'none', borderBottom: '1px solid rgba(234,171,0,0.3)' }}>Regístrate aquí</Link>
+            </p>
           </form>
 
           <div className={loginStyles.footer}>

@@ -128,6 +128,24 @@ export function Header() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </form>
+
+        <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+          <Link 
+            href="/login" 
+            style={{ 
+              fontSize: '0.8rem', 
+              fontWeight: 700, 
+              color: 'var(--color-primary)',
+              background: 'var(--color-secondary-container)',
+              padding: '0.5rem 1.2rem',
+              borderRadius: '100px',
+              textDecoration: 'none',
+              boxShadow: isScrolled ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
+            }}
+          >
+            Ingresar
+          </Link>
+        </div>
       </div>
     </motion.header>
   );

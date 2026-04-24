@@ -54,7 +54,7 @@ export default async function middleware(request: NextRequest) {
 
   // 4. Protección de rutas
   const isAdminPath  = pathname.match(/\/(es|en)\/admin/);
-  const isPortalPath = pathname.match(/\/(es|en)\/asociados\/portal/);
+  const isPortalPath = pathname.match(/\/(es|en)\/mi-cuenta/);
   const isLoginPath  = pathname.match(/\/(es|en)\/login/);
 
   const locale = pathname.split('/')[1] || 'es';
@@ -75,7 +75,9 @@ export default async function middleware(request: NextRequest) {
   // Con sesión pero sin rol admin en rutas de admin → redirigir al portal
   if (isAdminPath && user && role !== 'admin') {
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/asociados/portal/dashboard`;
+    url.pathname = role === 'responsable_comite'
+      ? `/${locale}/mi-cuenta/mis-comites`
+      : `/${locale}/mi-cuenta/dashboard`;
     return NextResponse.redirect(url);
   }
 
@@ -89,8 +91,10 @@ export default async function middleware(request: NextRequest) {
       url.pathname = redirectTo;
     } else if (role === 'admin') {
       url.pathname = `/${locale}/admin`;
+    } else if (role === 'responsable_comite') {
+      url.pathname = `/${locale}/mi-cuenta/mis-comites`;
     } else {
-      url.pathname = `/${locale}/asociados/portal/dashboard`;
+      url.pathname = `/${locale}/mi-cuenta/dashboard`;
     }
     return NextResponse.redirect(url);
   }

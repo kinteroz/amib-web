@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { logoutUser } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
 
 export default async function AdminLayout({
@@ -22,7 +23,7 @@ export default async function AdminLayout({
   }
 
   if (user.user_metadata?.role !== 'admin') {
-    redirect(`/${locale}/asociados/portal/dashboard`);
+    redirect(`/${locale}/mi-cuenta/dashboard`);
   }
 
   return (
@@ -107,6 +108,18 @@ export default async function AdminLayout({
                 Usuarios
               </Link>
             </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/comites`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Comités
+              </Link>
+            </li>
           </ul>
         </nav>
 
@@ -120,7 +133,7 @@ export default async function AdminLayout({
             ← Volver al Portal
           </Link>
           
-          <form action="/auth/signout" method="post">
+          <form action={logoutUser}>
             <button type="submit" style={{ 
               width: '100%', 
               background: 'rgba(255,77,79,0.1)', 

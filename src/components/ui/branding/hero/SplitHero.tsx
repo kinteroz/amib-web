@@ -3,6 +3,7 @@
 import React from 'react';
 import { Database } from '@/types/database.types';
 import styles from '../../animations/animations.module.css';
+import Image from 'next/image';
 
 type Banner = Database['public']['Tables']['banners']['Row'];
 
@@ -121,13 +122,12 @@ export function SplitHero({ banner, onVideoEnd }: HeroLayoutProps) {
             <source src={banner.media_url || ''} type="video/mp4" />
           </video>
         ) : (
-          <div style={{ 
-            width: '100%', 
-            height: '100%', 
-            backgroundImage: `url(${banner.media_url})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }} />
+          <Image
+            src={banner.media_url || ''}
+            alt={banner.titulo}
+            fill
+            style={{ objectFit: 'cover' }}
+          />
         )}
         {/* Gradient Overlay for the split point */}
         <div style={{ 

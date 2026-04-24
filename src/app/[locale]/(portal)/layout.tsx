@@ -13,7 +13,7 @@ export default function PortalGroupLayout({
 
   // Si estamos dentro del portal privado, omitir el Header del sitio público.
   // El PortalLayout (sidebar + topbar) gestiona su propia navegación.
-  const isPrivatePortal = pathname.includes('/asociados/portal');
+  const isPrivatePortal = pathname.includes('/mi-cuenta');
 
   if (isPrivatePortal) {
     return <>{children}</>;

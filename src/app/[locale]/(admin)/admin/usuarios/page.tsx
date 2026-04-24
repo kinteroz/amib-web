@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
-type Rol = 'admin' | 'asociado';
+type Rol = 'admin' | 'asociado' | 'certificado' | 'responsable_comite';
 
 interface Usuario {
   id: string;
@@ -10,14 +10,18 @@ interface Usuario {
   role: Rol | null;
   nombre: string | null;
   institucion: string | null;
+  telefono: string | null;
+  matricula: string | null;
   created_at: string;
   last_sign_in_at: string | null;
   email_confirmed_at: string | null;
 }
 
 const ROL_LABELS: Record<string, { label: string; bg: string; color: string }> = {
-  admin:    { label: 'Admin CMS',  bg: '#fef3c7', color: '#92400e' },
-  asociado: { label: 'Asociado',   bg: '#dbeafe', color: '#1e40af' },
+  admin:              { label: 'Admin CMS',  bg: '#fef3c7', color: '#92400e' },
+  asociado:           { label: 'Asociado',   bg: '#dbeafe', color: '#1e40af' },
+  certificado:        { label: 'Certificado', bg: '#dcfce7', color: '#166534' },
+  responsable_comite: { label: 'Responsable Comité', bg: '#f3e8ff', color: '#6b21a8' },
 };
 
 const sinRol = { label: 'Sin rol', bg: '#f1f5f9', color: '#64748b' };
@@ -109,10 +113,11 @@ export default function AdminUsuarios() {
   };
 
   const contadores = {
-    total:    usuarios.length,
-    admin:    usuarios.filter(u => u.role === 'admin').length,
-    asociado: usuarios.filter(u => u.role === 'asociado').length,
-    sinRol:   usuarios.filter(u => !u.role).length,
+    total:       usuarios.length,
+    admin:       usuarios.filter(u => u.role === 'admin').length,
+    asociado:    usuarios.filter(u => u.role === 'asociado').length,
+    certificado: usuarios.filter(u => u.role === 'certificado').length,
+    sinRol:      usuarios.filter(u => !u.role).length,
   };
 
   return (
@@ -131,12 +136,13 @@ export default function AdminUsuarios() {
       </header>
 
       {/* Métricas rápidas */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
         {[
-          { label: 'Total',     value: contadores.total,    color: '#001F3F' },
-          { label: 'Admins',    value: contadores.admin,    color: '#92400e' },
-          { label: 'Asociados', value: contadores.asociado, color: '#1e40af' },
-          { label: 'Sin rol',   value: contadores.sinRol,   color: '#64748b' },
+          { label: 'Total',        value: contadores.total,       color: '#001F3F' },
+          { label: 'Admins',       value: contadores.admin,       color: '#92400e' },
+          { label: 'Asociados',    value: contadores.asociado,    color: '#1e40af' },
+          { label: 'Certificados', value: contadores.certificado, color: '#166534' },
+          { label: 'Sin rol',      value: contadores.sinRol,      color: '#64748b' },
         ].map(({ label, value, color }) => (
           <div key={label} style={{ background: 'white', padding: '1.25rem 1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
             <div style={{ fontSize: '1.75rem', fontWeight: 800, color }}>{value}</div>
@@ -161,6 +167,7 @@ export default function AdminUsuarios() {
           <option value="todos">Todos los roles</option>
           <option value="admin">Admin CMS</option>
           <option value="asociado">Asociado</option>
+          <option value="certificado">Certificado</option>
         </select>
       </div>
 
@@ -169,7 +176,7 @@ export default function AdminUsuarios() {
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-              {['Usuario', 'Rol', 'Institución', 'Verificado', 'Último acceso', 'Acciones'].map(h => (
+              {['Usuario', 'Rol', 'Institución', 'Matrícula', 'Teléfono', 'Verificado', 'Acciones'].map(h => (
                 <th key={h} style={{ padding: '1rem 1.25rem', fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
@@ -199,6 +206,7 @@ export default function AdminUsuarios() {
                       >
                         <option value="admin">Admin CMS</option>
                         <option value="asociado">Asociado</option>
+                        <option value="certificado">Certificado</option>
                       </select>
                       <button onClick={() => guardarRol(u.id)} style={{ background: '#001F3F', color: 'white', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '5px', cursor: 'pointer', fontSize: '0.75rem' }}>✓</button>
                       <button onClick={() => setEditingRol(null)} style={{ background: 'none', border: '1px solid #e2e8f0', padding: '0.3rem 0.7rem', borderRadius: '5px', cursor: 'pointer', fontSize: '0.75rem' }}>✕</button>
@@ -219,6 +227,16 @@ export default function AdminUsuarios() {
                   {u.institucion || <span style={{ color: '#cbd5e1' }}>—</span>}
                 </td>
 
+                {/* Matrícula */}
+                <td style={{ padding: '1rem 1.25rem', fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>
+                  {u.matricula || <span style={{ color: '#cbd5e1' }}>—</span>}
+                </td>
+
+                {/* Teléfono */}
+                <td style={{ padding: '1rem 1.25rem', fontSize: '0.85rem', color: '#475569' }}>
+                  {u.telefono || <span style={{ color: '#cbd5e1' }}>—</span>}
+                </td>
+
                 {/* Verificado */}
                 <td style={{ padding: '1rem 1.25rem' }}>
                   <span style={{ fontSize: '0.72rem', fontWeight: 600, padding: '0.2rem 0.5rem', borderRadius: '4px', background: u.email_confirmed_at ? '#dcfce7' : '#fef3c7', color: u.email_confirmed_at ? '#166534' : '#92400e' }}>
@@ -232,6 +250,8 @@ export default function AdminUsuarios() {
                     ? new Date(u.last_sign_in_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
                     : 'Nunca'}
                 </td>
+
+
 
                 {/* Acciones */}
                 <td style={{ padding: '1rem 1.25rem' }}>
@@ -285,7 +305,9 @@ export default function AdminUsuarios() {
                 <div style={{ display: 'grid', gap: '0.4rem' }}>
                   <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569' }}>Rol *</label>
                   <select required value={form.role} onChange={e => setForm({ ...form, role: e.target.value as Rol })} style={inputStyle}>
+                    <option value="certificado">Certificado</option>
                     <option value="asociado">Asociado</option>
+                    <option value="responsable_comite">Responsable Comité (AMIB)</option>
                     <option value="admin">Admin CMS</option>
                   </select>
                 </div>
@@ -323,6 +345,7 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid #cbd5e1',
   fontSize: '0.9rem',
   background: 'white',
+  color: '#0f172a',
   width: '100%',
   boxSizing: 'border-box',
 };

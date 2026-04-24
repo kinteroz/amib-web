@@ -52,6 +52,29 @@ export interface ComiteSesion {
   updated_at: string
 }
 
+export interface Minuta {
+  id: string
+  sesion_id: string
+  titulo: string
+  archivo_url: string
+  fecha_subida: string
+  subido_por: string | null
+}
+
+export interface Informe {
+  id: string
+  titulo: string
+  categoria: 'anual' | 'trimestral' | 'especial'
+  fecha_periodo: string
+  descripcion: string
+  portada_url: string
+  archivo_url: string
+  orden: number
+  activo: boolean
+  created_at: string
+  updated_at: string
+}
+
 // ── Funciones de consulta ──────────────────────────────────────────────────
 
 /**
@@ -137,4 +160,45 @@ export async function getSessionUser() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   return user
+}
+
+/**
+ * Devuelve los informes activos, ordenados por orden y fecha.
+ */
+export async function getInformes(): Promise<Informe[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('informes')
+    .select('*')
+    .eq('activo', true)
+    .order('orden', { ascending: true })
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[getInformes]', error.message)
+    return []
+  }
+
+  return (data ?? []) as Informe[]
+}
+
+/**
+ * Devuelve las minutas asociadas a una sesión de comité.
+ */
+export async function getMinutas(sesionId: string): Promise<Minuta[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('minutas')
+    .select('*')
+    .eq('sesion_id', sesionId)
+    .order('fecha_subida', { ascending: false })
+
+  if (error) {
+    console.error('[getMinutas]', error.message)
+    return []
+  }
+
+  return (data ?? []) as Minuta[]
 }

@@ -5,72 +5,16 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '@/components/portal/portal.module.css';
 
-interface Informe {
-  id: string;
-  titulo: string;
-  categoria: 'anual' | 'trimestral' | 'especial';
-  fecha: string;
-  descripcion: string;
-  portada: string;
-  url: string;
-}
+import type { Informe } from '@/lib/supabase/server';
 
-const informesData: Informe[] = [
-  { 
-    id: '2024-anual', 
-    titulo: 'Gestión Bursátil 2024', 
-    categoria: 'anual', 
-    fecha: 'Marzo 2024', 
-    descripcion: 'Análisis detallado del mercado de valores, resiliencia institucional y nuevos protocolos operativos.',
-    portada: '/assets/portal/informe_2024.png',
-    url: '#' 
-  },
-  { 
-    id: '2023-anual', 
-    titulo: 'Consolidación 2023', 
-    categoria: 'anual', 
-    fecha: 'Marzo 2023', 
-    descripcion: 'Reporte de sostenibilidad financiera y crecimiento de la infraestructura del mercado mexicano.',
-    portada: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=400&q=80',
-    url: '#' 
-  },
-  { 
-    id: '2022-anual', 
-    titulo: 'Transición Digital 2022', 
-    categoria: 'anual', 
-    fecha: 'Marzo 2022', 
-    descripcion: 'Iniciativas de digitalización del mercado y protocolos de ciberseguridad financiera.',
-    portada: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80',
-    url: '#' 
-  },
-  { 
-    id: '2021-anual', 
-    titulo: 'Resiliencia 2021', 
-    categoria: 'anual', 
-    fecha: 'Marzo 2021', 
-    descripcion: 'Impacto post-pandemia y estrategias de reactivación del sector bursátil en México.',
-    portada: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80',
-    url: '#' 
-  },
-  { 
-    id: 'q4-2023', 
-    titulo: 'Reporte Trimestral Q4', 
-    categoria: 'trimestral', 
-    fecha: 'Dic 2023', 
-    descripcion: 'Cierre del ciclo anual y proyecciones para el mercado de renta variable.',
-    portada: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=400&q=80',
-    url: '#' 
-  },
-];
-
-export default function InformesPage() {
+export default function InformesClient({ informes }: { informes: Informe[] }) {
   const [filter, setFilter] = useState<'todos' | 'anual' | 'trimestral' | 'especial'>('todos');
 
-  const filteredInformes = informesData.filter(inf => 
+  const filteredInformes = informes.filter(inf => 
     filter === 'todos' || inf.categoria === filter
   );
 
-  const featuredInforme = informesData[0]; // El 2024 es el destacado
+  const featuredInforme = informes[0]; // El más reciente es el destacado
 
   return (
     <div className={styles.informesWrapper}>
@@ -127,8 +71,8 @@ export default function InformesPage() {
         >
           <div className={styles.bookWrapper}>
             <Image 
-              src={featuredInforme.portada} 
-              alt={featuredInforme.titulo} 
+              src={featuredInforme?.portada_url || '/assets/portal/informe_2024.png'} 
+              alt={featuredInforme?.titulo || 'Informe Destacado'} 
               width={320} 
               height={400} 
               className={styles.bookCover}
@@ -178,10 +122,10 @@ export default function InformesPage() {
                 className={styles.reportCard}
               >
                 <div className={styles.cardImageInner}>
-                  <Image src={inf.portada} alt={inf.titulo} fill style={{ objectFit: 'cover' }} />
+                  <Image src={inf.portada_url || 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=400&q=80'} alt={inf.titulo} fill style={{ objectFit: 'cover' }} />
                   {/* Badge del Año */}
                   <div className={styles.yearBadge}>
-                    {inf.fecha.split(' ')[1] || inf.fecha}
+                    {inf.fecha_periodo.split(' ')[1] || inf.fecha_periodo}
                   </div>
                   {/* Solo un gradiente sutil, sin texto que tape la imagen principal */}
                   <div className={styles.cardGlassOverlay} />
@@ -191,10 +135,10 @@ export default function InformesPage() {
                   <h3 className={styles.reportCardTitle}>{inf.titulo}</h3>
                   <p className={styles.reportCardDesc}>{inf.descripcion}</p>
                   
-                  <button className={styles.downloadReportBtn}>
+                  <a href={inf.archivo_url !== '#' ? inf.archivo_url : undefined} target="_blank" rel="noreferrer" className={styles.downloadReportBtn} style={{ textDecoration: 'none', display: 'inline-flex' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
                     Descargar PDF
-                  </button>
+                  </a>
                 </div>
               </motion.div>
             ))}

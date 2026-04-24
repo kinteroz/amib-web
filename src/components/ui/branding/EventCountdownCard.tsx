@@ -153,7 +153,7 @@ export function EventCountdownCard({ eventos = [], activeIndex }: EventCountdown
             {/* Actions */}
             <div className={styles.eventCardActions}>
               <Link
-                href={`/eventos/${currentEvent.id}`}
+                href={`/eventos/${currentEvent.slug}`}
                 style={{
                   background: 'var(--color-secondary-container)',
                   color: 'var(--color-primary)',

@@ -4,25 +4,59 @@ import { notFound } from 'next/navigation';
 import { FullBleedHero } from '@/components/ui/branding/FullBleedHero';
 import Link from 'next/link';
 import { LiveQA } from '@/components/ui/events/LiveQA';
+import { Metadata } from 'next';
+import Image from 'next/image';
 
 interface EventoPageProps {
-  params: Promise<{ id: string, locale: string }>;
+  params: Promise<{ slug: string, locale: string }>;
+}
+
+export async function generateMetadata({ params }: EventoPageProps): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const supabase = await createClient();
+  
+  const { data: evento } = await supabase
+    .from('eventos')
+    .select('titulo, descripcion, imagen_url')
+    .eq('slug', slug)
+    .single();
+
+  if (!evento) return { title: 'Evento no encontrado | AMIB' };
+
+  return {
+    title: `${evento.titulo} | Eventos AMIB`,
+    description: evento.descripcion || `Participa en ${evento.titulo}. Organizado por la Asociación Mexicana de Instituciones Bursátiles.`,
+    openGraph: {
+      title: evento.titulo,
+      description: evento.descripcion || '',
+      images: evento.imagen_url ? [{ url: evento.imagen_url }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: evento.titulo,
+      description: evento.descripcion || '',
+      images: evento.imagen_url ? [evento.imagen_url] : [],
+    }
+  };
 }
 
 export default async function EventoDetailPage({ params }: EventoPageProps) {
-  const { id, locale } = await params;
+  const { slug, locale } = await params;
   const supabase = await createClient();
 
-  // Fetch Event
+  // Fetch Event by slug
   const { data: evento, error } = (await supabase
     .from('eventos')
     .select('*')
-    .eq('id', id)
+    .eq('slug', slug)
     .single()) as any;
 
   if (error || !evento) {
     notFound();
   }
+  
+  const id = evento.id;
 
   // Fetch Speakers
   const { data: ponentes } = await supabase
@@ -68,7 +102,7 @@ export default async function EventoDetailPage({ params }: EventoPageProps) {
             accent={evento.badge_texto || undefined}
          >
             {isRegistrationOpen ? (
-                <Link href={`/${locale}/eventos/${id}/registro`} style={{ background: '#38bdf8', color: '#001F3F', padding: '1rem 2.5rem', borderRadius: '8px', fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
+                <Link href={`/${locale}/eventos/${slug}/registro`} style={{ background: '#38bdf8', color: '#001F3F', padding: '1rem 2.5rem', borderRadius: '8px', fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
                     {evento.cta_texto || 'Registrarse Ahora'}
                 </Link>
             ) : (
@@ -89,7 +123,7 @@ export default async function EventoDetailPage({ params }: EventoPageProps) {
              <h1 style={{ fontSize: '3.5rem', fontWeight: 800, color: layout === 'immersive' ? 'white' : '#0f172a', marginBottom: '1rem' }}>{evento.titulo}</h1>
              <p style={{ fontSize: '1.2rem', color: layout === 'immersive' ? '#94a3b8' : '#64748b', maxWidth: '800px', margin: '0 auto 2rem' }}>{evento.descripcion}</p>
              {isRegistrationOpen ? (
-                 <Link href={`/${locale}/eventos/${id}/registro`} style={{ background: '#001F3F', color: 'white', padding: '1rem 2.5rem', borderRadius: '8px', fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
+                 <Link href={`/${locale}/eventos/${slug}/registro`} style={{ background: '#001F3F', color: 'white', padding: '1rem 2.5rem', borderRadius: '8px', fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
                      {evento.cta_texto || 'Registrarse Ahora'}
                  </Link>
              ) : (
@@ -176,7 +210,7 @@ export default async function EventoDetailPage({ params }: EventoPageProps) {
                             </div>
                             
                             {isRegistrationOpen ? (
-                                <Link href={`/${locale}/eventos/${id}/registro?ticket=${t.id}`} style={{ width: '100%', background: '#001F3F', color: 'white', padding: '1rem', borderRadius: '8px', fontWeight: 700, textDecoration: 'none' }}>
+                                <Link href={`/${locale}/eventos/${slug}/registro?ticket=${t.id}`} style={{ width: '100%', background: '#001F3F', color: 'white', padding: '1rem', borderRadius: '8px', fontWeight: 700, textDecoration: 'none' }}>
                                     Seleccionar
                                 </Link>
                             ) : (
@@ -230,7 +264,16 @@ export default async function EventoDetailPage({ params }: EventoPageProps) {
                             border: layout === 'minimal' ? '1px solid #e2e8f0' : 'none',
                             textAlign: layout === 'minimal' ? 'left' : 'center'
                         }}>
-                            <div style={{ height: '250px', background: p.imagen_url ? `url(${p.imagen_url}) center/cover` : '#e2e8f0' }} />
+                            <div style={{ height: '250px', position: 'relative', background: '#e2e8f0' }}>
+                                {p.imagen_url && (
+                                    <Image 
+                                        src={p.imagen_url} 
+                                        alt={p.nombre} 
+                                        fill 
+                                        style={{ objectFit: 'cover' }} 
+                                    />
+                                )}
+                            </div>
                             <div style={{ padding: '1.5rem' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: layout === 'immersive' ? 'white' : '#0f172a', marginBottom: '0.2rem' }}>{p.nombre}</h3>
                                 <div style={{ fontSize: '0.9rem', fontWeight: 600, color: layout === 'immersive' ? '#38bdf8' : '#001F3F', marginBottom: '1rem' }}>{p.cargo}</div>
@@ -257,7 +300,12 @@ export default async function EventoDetailPage({ params }: EventoPageProps) {
                             {g.media_tipo === 'video' ? (
                                 <video src={g.media_url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                                <img src={g.media_url} alt={g.titulo || 'Galeria'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <Image 
+                                    src={g.media_url} 
+                                    alt={g.titulo || 'Galeria'} 
+                                    fill
+                                    style={{ objectFit: 'cover' }} 
+                                />
                             )}
                             {g.titulo && (
                                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1rem', background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', color: 'white', fontWeight: 600 }}>

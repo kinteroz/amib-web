@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from '@/components/ui/animations/Skeleton';
 import { Database } from '@/types/database.types';
 import { createClient } from '@/lib/supabase/client';
+import { registerForEvent } from '@/app/actions/registerEvent';
 
 type Evento = Database['public']['Tables']['eventos']['Row'] & {
     configuracion_registro?: any;
@@ -39,19 +40,19 @@ export function EventRegistrationWizard({ evento, tickets }: EventRegistrationWi
           // Generate a unique QR code hash (simple version using timestamp + random)
           const uniqueHash = `AMIB-${evento.id.substring(0,6)}-${Date.now()}-${Math.floor(Math.random()*1000)}`;
           
-          const { error } = await supabase
-              .from('evento_asistentes')
-              .insert([{
-                  evento_id: evento.id,
-                  nombre_completo: formData.nombre,
-                  email: formData.email,
-                  qr_code: uniqueHash,
-                  asistio: false
-              }]);
+          const result = await registerForEvent({
+              evento_id: evento.id,
+              nombre_completo: formData.nombre,
+              email: formData.email,
+              qr_code: uniqueHash,
+              asistio: false
+          });
               
-          if (error) throw error;
+          if (!result.success) throw new Error(result.error);
           
-          setQrCodeData(uniqueHash);
+          const qrUrl = `${window.location.origin}/es/eventos/${evento.id}/checkin?ticket=${uniqueHash}`;
+          
+          setQrCodeData(qrUrl);
           setStep(s => s + 1);
       } catch (err) {
           console.error(err);

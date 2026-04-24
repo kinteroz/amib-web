@@ -5,19 +5,19 @@ import { EventRegistrationWizard } from '@/components/ui/branding/EventRegistrat
 import { InteractiveSpotlightBackground } from '@/components/ui/animations/InteractiveSpotlightBackground';
 
 interface RegistrationPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function EventRegistrationPage({ params }: RegistrationPageProps) {
-  const { id } = await params;
-  console.log('[DEBUG] Registration Page ID:', id);
+  const { slug } = await params;
+  console.log('[DEBUG] Registration Page Slug:', slug);
   const supabase = await createClient();
 
   // Fetch Event
   const { data: evento, error } = (await supabase
     .from('eventos')
     .select('*')
-    .eq('id', id)
+    .eq('slug', slug)
     .single()) as any;
 
   if (error) {
@@ -25,9 +25,11 @@ export default async function EventRegistrationPage({ params }: RegistrationPage
   }
   
   if (!evento) {
-    console.warn('[DEBUG] Event not found for ID:', id);
+    console.warn('[DEBUG] Event not found for Slug:', slug);
     notFound();
   }
+  
+  const id = evento.id;
 
   // Fetch Tickets
   const { data: tickets } = await supabase

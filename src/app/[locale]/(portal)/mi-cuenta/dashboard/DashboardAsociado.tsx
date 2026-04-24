@@ -3,7 +3,7 @@
 import React from 'react';
 import styles from '@/components/portal/portal.module.css';
 
-export default function DashboardPage() {
+export function DashboardAsociado({ user }: { user: any }) {
   const circulares = [
     { title: 'Circular Única de Emisoras: Actualización en Requisitos...', source: 'CNBV', time: 'Hoy, 09:12 AM', type: 'PDF (1.2MB)' },
     { title: 'Nuevas Disposiciones de Ética Profesional para Operadores...', source: 'AMIB', time: 'Ayer, 4:45 PM', type: 'DOCX (0.8MB)' },

@@ -127,7 +127,7 @@ export function InstitutionalCalendar({ eventos }: InstitutionalCalendarProps) {
             );
 
             return isHighlighted ? (
-              <Link key={day} href={`/eventos/${evento!.id}`} style={{ textDecoration: 'none' }}>
+              <Link key={day} href={`/eventos/${evento!.slug}`} style={{ textDecoration: 'none' }}>
                 {dayCell}
               </Link>
             ) : (
@@ -168,7 +168,7 @@ export function InstitutionalCalendar({ eventos }: InstitutionalCalendarProps) {
                   </div>
                 )}
                 
-                <Link key={evento.id} href={`/eventos/${evento.id}`} style={{ textDecoration: 'none' }}>
+                <Link key={evento.id} href={`/eventos/${evento.slug}`} style={{ textDecoration: 'none' }}>
                   <motion.div 
                     className={styles.premiumCard}
                     whileHover={{ x: 6 }}

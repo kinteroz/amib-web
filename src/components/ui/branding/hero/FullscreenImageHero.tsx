@@ -3,6 +3,7 @@
 import React from 'react';
 import { Database } from '@/types/database.types';
 import styles from '../../animations/animations.module.css';
+import Image from 'next/image';
 
 type Banner = Database['public']['Tables']['banners']['Row'];
 
@@ -27,14 +28,21 @@ export function FullscreenImageHero({ banner }: HeroLayoutProps) {
     }}>
       {/* Background Image */}
       {banner.media_url && (
-        <div style={{ 
-          position: 'absolute', 
-          inset: 0, 
-          zIndex: 1,
-          backgroundImage: `linear-gradient(rgba(0, 5, 15, 0.6), rgba(0, 15, 30, 0.8)), url(${banner.media_url})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }} />
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+          <Image
+            src={banner.media_url}
+            alt={banner.titulo}
+            fill
+            priority
+            style={{ objectFit: 'cover' }}
+          />
+          {/* Overlay */}
+          <div style={{ 
+            position: 'absolute', 
+            inset: 0, 
+            background: 'linear-gradient(rgba(0, 5, 15, 0.6), rgba(0, 15, 30, 0.8))'
+          }} />
+        </div>
       )}
 
       {/* Content */}

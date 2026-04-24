@@ -141,6 +141,7 @@ export interface Database {
           cta_texto: string | null
           layout_tipo: 'classic' | 'modern' | 'minimal' | 'immersive'
           configuracion_registro: Json | null
+          slug: string
         }
         Insert: {
           activo?: boolean
@@ -167,6 +168,7 @@ export interface Database {
           cta_texto?: string | null
           layout_tipo?: 'classic' | 'modern' | 'minimal' | 'immersive'
           configuracion_registro?: Json | null
+          slug: string
         }
         Update: {
           activo?: boolean
@@ -193,6 +195,7 @@ export interface Database {
           cta_texto?: string | null
           layout_tipo?: 'classic' | 'modern' | 'minimal' | 'immersive'
           configuracion_registro?: Json | null
+          slug?: string
         }
       }
       evento_tickets: {

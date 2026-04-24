@@ -4,8 +4,12 @@ import { getMessages } from 'next-intl/server';
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Asociación Mexicana de Instituciones Bursátiles",
-  description: "Portal oficial de la AMIB",
+  title: {
+    template: '%s | AMIB - Asociación Mexicana de Instituciones Bursátiles',
+    default: 'AMIB - Asociación Mexicana de Instituciones Bursátiles | Portal Institucional',
+  },
+  description: "Organismo de autorregulación que representa a las casas de bolsa y operadoras de fondos de inversión en México. Certificaciones, normatividad y eventos bursátiles.",
+  keywords: ["AMIB", "Bursátil", "Mercado de Valores", "Certificación AMIB", "Casas de Bolsa", "Inversiones México"],
 };
 
 export default async function RootLayout({
