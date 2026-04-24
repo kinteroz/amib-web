@@ -133,6 +133,14 @@ export interface Database {
           titulo: string
           ubicacion: string | null
           updated_at: string
+          tipo_hero: 'split' | 'fullscreen-video' | 'fullscreen-image'
+          efecto_overlay: 'matrix' | 'pulse' | 'grain' | 'none'
+          media_url: string | null
+          media_tipo: 'image' | 'video'
+          badge_texto: string | null
+          cta_texto: string | null
+          layout_tipo: 'classic' | 'modern' | 'minimal' | 'immersive'
+          configuracion_registro: Json | null
         }
         Insert: {
           activo?: boolean
@@ -151,6 +159,14 @@ export interface Database {
           titulo: string
           ubicacion?: string | null
           updated_at?: string
+          tipo_hero?: 'split' | 'fullscreen-video' | 'fullscreen-image'
+          efecto_overlay?: 'matrix' | 'pulse' | 'grain' | 'none'
+          media_url?: string | null
+          media_tipo?: 'image' | 'video'
+          badge_texto?: string | null
+          cta_texto?: string | null
+          layout_tipo?: 'classic' | 'modern' | 'minimal' | 'immersive'
+          configuracion_registro?: Json | null
         }
         Update: {
           activo?: boolean
@@ -169,6 +185,14 @@ export interface Database {
           titulo?: string
           ubicacion?: string | null
           updated_at?: string
+          tipo_hero?: 'split' | 'fullscreen-video' | 'fullscreen-image'
+          efecto_overlay?: 'matrix' | 'pulse' | 'grain' | 'none'
+          media_url?: string | null
+          media_tipo?: 'image' | 'video'
+          badge_texto?: string | null
+          cta_texto?: string | null
+          layout_tipo?: 'classic' | 'modern' | 'minimal' | 'immersive'
+          configuracion_registro?: Json | null
         }
       }
       evento_tickets: {
@@ -318,7 +342,6 @@ export interface Database {
           color_acento: string | null
           icono: string | null
           activo: boolean
-          orden: number
           created_at: string
           updated_at: string
         }
@@ -336,7 +359,6 @@ export interface Database {
           color_acento?: string | null
           icono?: string | null
           activo?: boolean
-          orden?: number
           created_at?: string
           updated_at?: string
         }
@@ -354,9 +376,145 @@ export interface Database {
           color_acento?: string | null
           icono?: string | null
           activo?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      evento_ponentes: {
+        Row: {
+          id: string
+          evento_id: string
+          nombre: string
+          cargo: string | null
+          bio: string | null
+          imagen_url: string | null
+          orden: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          evento_id: string
+          nombre: string
+          cargo?: string | null
+          bio?: string | null
+          imagen_url?: string | null
           orden?: number
           created_at?: string
           updated_at?: string
+        }
+        Update: {
+          id?: string
+          evento_id?: string
+          nombre?: string
+          cargo?: string | null
+          bio?: string | null
+          imagen_url?: string | null
+          orden?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      evento_asistentes: {
+        Row: {
+          id: string
+          evento_id: string
+          usuario_id: string | null
+          nombre_completo: string | null
+          email: string | null
+          qr_code: string
+          asistio: boolean
+          fecha_registro: string
+          fecha_checkin: string | null
+        }
+        Insert: {
+          id?: string
+          evento_id: string
+          usuario_id?: string | null
+          nombre_completo?: string | null
+          email?: string | null
+          qr_code: string
+          asistio?: boolean
+          fecha_registro?: string
+          fecha_checkin?: string | null
+        }
+        Update: {
+          id?: string
+          evento_id?: string
+          usuario_id?: string | null
+          nombre_completo?: string | null
+          email?: string | null
+          qr_code?: string
+          asistio?: boolean
+          fecha_registro?: string
+          fecha_checkin?: string | null
+        }
+      }
+      evento_preguntas: {
+        Row: {
+          id: string
+          evento_id: string
+          asistente_id: string | null
+          usuario_id: string | null
+          autor_nombre: string | null
+          pregunta: string
+          respondida: boolean
+          destacada: boolean
+          votos: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          evento_id: string
+          asistente_id?: string | null
+          usuario_id?: string | null
+          autor_nombre?: string | null
+          pregunta: string
+          respondida?: boolean
+          destacada?: boolean
+          votos?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          evento_id?: string
+          asistente_id?: string | null
+          usuario_id?: string | null
+          autor_nombre?: string | null
+          pregunta?: string
+          respondida?: boolean
+          destacada?: boolean
+          votos?: number
+          created_at?: string
+        }
+      }
+      evento_galeria: {
+        Row: {
+          id: string
+          evento_id: string
+          media_url: string
+          media_tipo: 'image' | 'video'
+          titulo: string | null
+          orden: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          evento_id: string
+          media_url: string
+          media_tipo?: 'image' | 'video'
+          titulo?: string | null
+          orden?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          evento_id?: string
+          media_url?: string
+          media_tipo?: 'image' | 'video'
+          titulo?: string | null
+          orden?: number
+          created_at?: string
         }
       }
       noticias: {

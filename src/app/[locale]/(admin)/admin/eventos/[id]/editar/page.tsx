@@ -26,13 +26,21 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
     es_destacado: false,
     imagen_url: '',
     activo: true,
+    tipo_hero: 'fullscreen-image',
+    efecto_overlay: 'none',
+    media_url: '',
+    media_tipo: 'image',
+    badge_texto: '',
+    cta_texto: '',
+    layout_tipo: 'classic'
   });
 
   const [tickets, setTickets] = useState<any[]>([]);
   const [agenda, setAgenda] = useState<any[]>([]);
   const [config, setConfig] = useState({
     permite_invitados: false,
-    max_invitados: 0
+    max_invitados: 0,
+    cupo_maximo: 0
   });
 
   useEffect(() => {
@@ -63,6 +71,13 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
                 es_destacado: !!evento.es_destacado,
                 imagen_url: evento.imagen_url || '',
                 activo: !!evento.activo,
+                tipo_hero: evento.tipo_hero || 'fullscreen-image',
+                efecto_overlay: evento.efecto_overlay || 'none',
+                media_url: evento.media_url || '',
+                media_tipo: evento.media_tipo || 'image',
+                badge_texto: evento.badge_texto || '',
+                cta_texto: evento.cta_texto || '',
+                layout_tipo: evento.layout_tipo || 'classic',
             });
             setAgenda(evento.agenda_json || []);
             setConfig(evento.configuracion_registro || { permite_invitados: false, max_invitados: 0 });
@@ -124,7 +139,14 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
                 audiencia: formData.audiencia,
                 es_destacado: formData.es_destacado,
                 imagen_url: formData.imagen_url,
-                activo: formData.activo
+                activo: formData.activo,
+                tipo_hero: formData.tipo_hero,
+                efecto_overlay: formData.efecto_overlay,
+                media_url: formData.media_url,
+                media_tipo: formData.media_tipo,
+                badge_texto: formData.badge_texto,
+                cta_texto: formData.cta_texto,
+                layout_tipo: formData.layout_tipo
             })
             .eq('id', id);
 
@@ -163,6 +185,7 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
 
   const tabs = [
     { id: 'general', label: 'Información General' },
+    { id: 'design', label: 'Hero y Diseño' },
     { id: 'tickets', label: 'Tickets y Precios' },
     { id: 'agenda', label: 'Agenda (Sesiones)' },
     { id: 'config', label: 'Configuración de Registro' },
@@ -178,6 +201,25 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
           <h1 style={{ fontSize: '2rem', color: '#0f172a', fontWeight: 700 }}>Editar Evento</h1>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
+            <a 
+                href={`/es/eventos/${id}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ 
+                    background: 'white', 
+                    color: '#001F3F', 
+                    border: '1px solid #001F3F', 
+                    padding: '0.8rem 1.5rem', 
+                    borderRadius: '8px', 
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                }}
+            >
+                👁️ Vista Previa
+            </a>
             <button 
                 disabled={saving}
                 onClick={saveEvento}
@@ -249,7 +291,7 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Modalidad</label>
-                <select name="modalidad" value={formData.modalidad} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white' }}>
+                <select name="modalidad" value={formData.modalidad} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
                   <option value="presencial">Presencial</option>
                   <option value="virtual">Virtual</option>
                   <option value="hibrido">Híbrido</option>
@@ -268,7 +310,78 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
                 <input type="checkbox" name="es_destacado" id="es_destacado" checked={formData.es_destacado} onChange={handleInputChange} style={{ width: '1.2rem', height: '1.2rem' }} />
-                <label htmlFor="es_destacado" style={{ fontSize: '0.9rem', color: '#475569', fontWeight: 600 }}>Destacar este evento (Aparecerá en el slider full-bleed del portal)</label>
+                <label htmlFor="es_destacado" style={{ fontSize: '0.9rem', color: '#475569', fontWeight: 600 }}>Destacar este evento (Aparecerá en el slider de eventos destacados)</label>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'design' && (
+          <div style={{ display: 'grid', gap: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', marginBottom: '1rem' }}>Diseño Premium del Evento</h2>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Tipo de Hero</label>
+                <select name="tipo_hero" value={formData.tipo_hero} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <option value="fullscreen-image">Imagen a Pantalla Completa</option>
+                  <option value="fullscreen-video">Video a Pantalla Completa</option>
+                  <option value="split">Dividido (Texto a la izq, Media a la der)</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Layout del Detalle</label>
+                <select name="layout_tipo" value={formData.layout_tipo} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <option value="classic">Clásico (Standard)</option>
+                  <option value="modern">Moderno (Tarjetas y Sombras)</option>
+                  <option value="minimal">Minimalista (Limpio y Blanco)</option>
+                  <option value="immersive">Inmersivo (Dark Mode)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>URL del Medio (Fondo de Hero)</label>
+                <input name="media_url" value={formData.media_url} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} placeholder="https://..." />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Tipo de Medio</label>
+                <select name="media_tipo" value={formData.media_tipo} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <option value="image">Imagen</option>
+                  <option value="video">Video (MP4)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Efecto Overlay</label>
+                <select name="efecto_overlay" value={formData.efecto_overlay} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <option value="none">Ninguno</option>
+                  <option value="grain">Ruido (Grain)</option>
+                  <option value="pulse">Pulso</option>
+                  <option value="matrix">Matrix</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Texto de Etiqueta (Badge)</label>
+                <input name="badge_texto" value={formData.badge_texto} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} placeholder="Ej: Nuevo" />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Texto CTA (Llamado a la acción del Hero)</label>
+              <input name="cta_texto" value={formData.cta_texto} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} placeholder="Ej: Regístrate Ahora" />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Acciones rápidas para este evento:</p>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <Link href={`/admin/eventos/${id}/ponentes`} style={{ background: '#e2e8f0', color: '#0f172a', padding: '0.5rem 1rem', borderRadius: '6px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Gestor de Ponentes →</Link>
+                <Link href={`/admin/eventos/${id}/galeria`} style={{ background: '#e2e8f0', color: '#0f172a', padding: '0.5rem 1rem', borderRadius: '6px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Galería de Medios →</Link>
+                <Link href={`/admin/eventos/${id}/asistentes`} style={{ background: '#e2e8f0', color: '#0f172a', padding: '0.5rem 1rem', borderRadius: '6px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Asistentes & QR →</Link>
+                <Link href={`/admin/eventos/${id}/preguntas`} style={{ background: '#e2e8f0', color: '#0f172a', padding: '0.5rem 1rem', borderRadius: '6px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Moderación Q&A →</Link>
+              </div>
             </div>
           </div>
         )}
@@ -319,7 +432,7 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Tipo de Acceso</label>
-              <select name="tipo_acceso" value={formData.tipo_acceso} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white' }}>
+              <select name="tipo_acceso" value={formData.tipo_acceso} onChange={handleInputChange} style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
                 <option value="libre">Libre (Gratuito)</option>
                 <option value="pago">Con Costo (Pago Online)</option>
                 <option value="invitacion">Por Invitación Cerrada</option>
@@ -344,6 +457,20 @@ export default function EditarEvento({ params }: { params: Promise<{ id: string 
                         type="number" 
                         value={config.max_invitados} 
                         onChange={(e) => setConfig({...config, max_invitados: parseInt(e.target.value) || 0})}
+                        style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
+                    />
+                </div>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', marginTop: '1rem' }}>
+                <h4 style={{ fontWeight: 600, color: '#0f172a', marginBottom: '1rem' }}>Límite de Asistencia (Cupo Total)</h4>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem' }}>Define el número máximo de personas que pueden registrarse al evento. Deja en 0 para cupo ilimitado.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '200px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Cupo Máximo</label>
+                    <input 
+                        type="number" 
+                        value={config.cupo_maximo} 
+                        onChange={(e) => setConfig({...config, cupo_maximo: parseInt(e.target.value) || 0})}
                         style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
                     />
                 </div>

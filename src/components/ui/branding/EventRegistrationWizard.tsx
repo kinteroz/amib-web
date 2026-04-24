@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from '@/components/ui/animations/Skeleton';
 import { Database } from '@/types/database.types';
+import { createClient } from '@/lib/supabase/client';
 
 type Evento = Database['public']['Tables']['eventos']['Row'] & {
     configuracion_registro?: any;
@@ -25,11 +26,50 @@ export function EventRegistrationWizard({ evento, tickets }: EventRegistrationWi
     cargo: '',
     invitados: [] as { nombre: string; email: string; cargo: string }[]
   });
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const supabase = createClient();
 
   const config = (evento as any).configuracion_registro || { permite_invitados: false, max_invitados: 0 };
   const maxInvitados = config.max_invitados || 0;
 
-  const nextStep = () => setStep(s => s + 1);
+  const handleRegistrationSubmit = async () => {
+      setIsRegistering(true);
+      try {
+          // Generate a unique QR code hash (simple version using timestamp + random)
+          const uniqueHash = `AMIB-${evento.id.substring(0,6)}-${Date.now()}-${Math.floor(Math.random()*1000)}`;
+          
+          const { error } = await supabase
+              .from('evento_asistentes')
+              .insert([{
+                  evento_id: evento.id,
+                  nombre_completo: formData.nombre,
+                  email: formData.email,
+                  qr_code: uniqueHash,
+                  asistio: false
+              }]);
+              
+          if (error) throw error;
+          
+          setQrCodeData(uniqueHash);
+          setStep(s => s + 1);
+      } catch (err) {
+          console.error(err);
+          alert('Error al procesar tu registro. Intenta nuevamente.');
+      } finally {
+          setIsRegistering(false);
+      }
+  };
+
+  const nextStep = () => {
+      if (step === 2 && evento.tipo_acceso !== 'pago') {
+          handleRegistrationSubmit();
+      } else if (step === 3 && evento.tipo_acceso === 'pago') {
+          handleRegistrationSubmit();
+      } else {
+          setStep(s => s + 1);
+      }
+  };
   const prevStep = () => setStep(s => s - 1);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,8 +190,10 @@ export function EventRegistrationWizard({ evento, tickets }: EventRegistrationWi
             )}
 
             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                <button onClick={prevStep} style={{ flex: 1, padding: '1.2rem', background: 'white', color: 'var(--color-primary)', border: '1px solid var(--color-primary)', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Atrás</button>
-                <button onClick={nextStep} style={{ flex: 2, padding: '1.2rem', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Confirmar y Proceder</button>
+                <button disabled={isRegistering} onClick={prevStep} style={{ flex: 1, padding: '1.2rem', background: 'white', color: 'var(--color-primary)', border: '1px solid var(--color-primary)', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Atrás</button>
+                <button disabled={isRegistering} onClick={nextStep} style={{ flex: 2, padding: '1.2rem', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isRegistering ? 0.7 : 1 }}>
+                    {isRegistering ? 'Procesando...' : 'Confirmar y Proceder'}
+                </button>
             </div>
           </motion.div>
         );
@@ -183,7 +225,9 @@ export function EventRegistrationWizard({ evento, tickets }: EventRegistrationWi
                         <div style={{ fontSize: '1.1rem', opacity: 0.7, color: 'var(--color-primary-container)' }}>Total a Pagar:</div>
                         <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--color-primary)' }}>${selectedTicket?.precio} MXN</div>
                     </div>
-                    <button onClick={nextStep} style={{ width: '100%', padding: '1.2rem', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>Pagar Ahora</button>
+                    <button disabled={isRegistering} onClick={nextStep} style={{ width: '100%', padding: '1.2rem', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isRegistering ? 0.7 : 1 }}>
+                        {isRegistering ? 'Procesando...' : 'Pagar Ahora'}
+                    </button>
                 </motion.div>
             )
         }
@@ -205,8 +249,12 @@ export function EventRegistrationWizard({ evento, tickets }: EventRegistrationWi
                         : `Hemos enviado tus boletos y el código QR de acceso al correo: ${formData.email}`}
                 </p>
                 <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.05)', display: 'inline-block' }}>
-                    <div style={{ width: '200px', height: '200px', background: 'rgba(0,0,0,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                        <div style={{ opacity: 0.1, fontSize: '4rem' }}>QR</div>
+                    <div style={{ width: '200px', height: '200px', background: 'rgba(0,0,0,0.05)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', overflow: 'hidden' }}>
+                        {qrCodeData ? (
+                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeData)}`} alt="QR Code" style={{ width: '100%', height: '100%' }} />
+                        ) : (
+                            <div style={{ opacity: 0.1, fontSize: '4rem' }}>QR</div>
+                        )}
                     </div>
                     <div style={{ marginTop: '1.5rem', textAlign: 'left' }}>
                         <div style={{ fontSize: '0.8rem', opacity: 0.6, color: 'var(--color-primary-container)' }}>EVENTO</div>
@@ -232,8 +280,12 @@ export function EventRegistrationWizard({ evento, tickets }: EventRegistrationWi
                     Tu transacción por ${selectedTicket?.precio} ha sido exitosa. Hemos enviado tu comprobante fiscal y tus boletos a {formData.email}.
                 </p>
                 <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.05)', display: 'inline-block' }}>
-                    <div style={{ width: '200px', height: '200px', background: 'rgba(0,0,0,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-                        <div style={{ opacity: 0.2, fontSize: '4rem' }}>QR</div>
+                    <div style={{ width: '200px', height: '200px', background: 'rgba(0,0,0,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', overflow: 'hidden' }}>
+                        {qrCodeData ? (
+                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeData)}`} alt="QR Code" style={{ width: '100%', height: '100%' }} />
+                        ) : (
+                            <div style={{ opacity: 0.2, fontSize: '4rem' }}>QR</div>
+                        )}
                     </div>
                     <div style={{ marginTop: '1.5rem', textAlign: 'left' }}>
                         <div style={{ fontSize: '0.8rem', opacity: 0.6, color: 'var(--color-primary-container)' }}>EVENTO / BOLETO</div>

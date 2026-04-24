@@ -12,8 +12,8 @@ import { MarketPulse } from '@/components/ui/branding/MarketPulse';
 import { MarketBar } from '@/components/ui/branding/MarketBar';
 import { MarketMatrix } from '@/components/ui/branding/MarketMatrix';
 import { EventsSection, UpcomingEventSection } from '@/components/ui/branding/EventsSection';
-
 import { Footer } from '@/components/layout/Footer';
+import AiChatBot from "@/components/ui/ai/AiChatBot";
 
 type Banner = Database['public']['Tables']['banners']['Row'];
 type Noticia = Database['public']['Tables']['noticias']['Row'];
@@ -479,6 +479,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         </Suspense>
       </main>
       <Footer />
+      <AiChatBot />
     </InteractiveSpotlightBackground>
   );
 }
