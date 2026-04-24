@@ -150,8 +150,8 @@ function AcuerdosContent() {
       {/* Header */}
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a' }}>Acuerdos y Compromisos</h1>
-          <p style={{ color: '#64748b', marginTop: '0.3rem' }}>Seguimiento de acuerdos generados en las minutas.</p>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>Acuerdos y Compromisos</h1>
+          <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '0.3rem', fontSize: '0.95rem' }}>Seguimiento de acuerdos generados en las minutas.</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           {comites.length > 1 && (
@@ -250,7 +250,7 @@ function AcuerdosContent() {
                 <select
                   value={a.estado}
                   onChange={e => cambiarEstado(a.id, e.target.value)}
-                  style={{ padding: '0.4rem 0.7rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem', color: '#0f172a', cursor: 'pointer' }}
+                  style={{ padding: '0.4rem 0.7rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8rem', color: '#001F3F', background: 'white', cursor: 'pointer' }}
                 >
                   <option value="abierto">Abierto</option>
                   <option value="en_proceso">En Proceso</option>
@@ -347,8 +347,8 @@ const inputStyle: React.CSSProperties = {
   fontSize: '0.875rem', background: 'white', color: '#0f172a', width: '100%', boxSizing: 'border-box',
 };
 const selectStyle: React.CSSProperties = {
-  padding: '0.6rem 0.9rem', borderRadius: '8px', border: '1px solid #e2e8f0',
-  fontSize: '0.875rem', color: '#0f172a', background: 'white',
+  padding: '0.6rem 0.9rem', borderRadius: '8px', border: '1px solid #cbd5e1',
+  fontSize: '0.875rem', color: '#001F3F', background: 'white', cursor: 'pointer',
 };
 const cancelBtnStyle: React.CSSProperties = {
   padding: '0.75rem 1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0',

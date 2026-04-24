@@ -55,10 +55,10 @@ export default function MisComitesPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'white', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
           Mis Comités
         </h1>
-        <p style={{ color: '#64748b' }}>Gestiona los comités bajo tu responsabilidad.</p>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.95rem' }}>Gestiona los comités bajo tu responsabilidad.</p>
       </div>
 
       {loading ? (

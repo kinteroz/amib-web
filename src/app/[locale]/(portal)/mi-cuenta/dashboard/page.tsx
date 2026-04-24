@@ -1,21 +1,16 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePortalUser } from '@/hooks/usePortalUser';
 import { useParams, useRouter } from 'next/navigation';
 import { DashboardAsociado } from './DashboardAsociado';
 import { DashboardCertificado } from './DashboardCertificado';
+import { DashboardResponsable } from './DashboardResponsable';
 
 export default function DashboardController() {
   const user = usePortalUser();
   const { locale } = useParams();
   const router = useRouter();
-
-  useEffect(() => {
-    if (user?.role?.toLowerCase() === 'responsable_comite') {
-      router.replace(`/${locale}/mi-cuenta/mis-comites`);
-    }
-  }, [user, locale, router]);
 
   if (!user) {
     return (
@@ -25,17 +20,13 @@ export default function DashboardController() {
     );
   }
 
-  if (user.role?.toLowerCase() === 'responsable_comite') {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50vh', color: 'rgba(255,255,255,0.5)' }}>
-        Redirigiendo...
-      </div>
-    );
+  const role = user.role?.toLowerCase();
+
+  if (role === 'responsable_comite') {
+    return <DashboardResponsable user={user} locale={locale as string} />;
   }
 
-  const isCertificado = user.role?.toLowerCase() === 'certificado';
-
-  if (isCertificado) {
+  if (role === 'certificado') {
     return <DashboardCertificado user={user} locale={locale as string} />;
   }
 

@@ -113,15 +113,15 @@ function SesionesContent() {
     <div>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a' }}>Sesiones</h1>
-          <p style={{ color: '#64748b', marginTop: '0.3rem' }}>Programa y gestiona las sesiones de tus comités.</p>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>Sesiones</h1>
+          <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '0.3rem', fontSize: '0.95rem' }}>Programa y gestiona las sesiones de tus comités.</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           {comites.length > 1 && (
             <select
               value={selectedComite}
               onChange={e => setSelectedComite(e.target.value)}
-              style={{ padding: '0.6rem 0.9rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.875rem', color: '#0f172a', background: 'white' }}
+              style={{ padding: '0.6rem 0.9rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', color: '#001F3F', background: 'white', cursor: 'pointer' }}
             >
               {comites.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
             </select>
