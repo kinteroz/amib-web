@@ -6,15 +6,20 @@ Este documento centraliza el estado actual del proyecto, la arquitectura definid
 
 ## 🚀 Estado Actual del Proyecto
 
-El proyecto ha completado la **Fase 5: Integración de Datos Privados**. El middleware de autenticación protege todas las rutas del portal y del admin. Los datos reales de comités provienen de Supabase vía RSC.
+El proyecto ha completado la **Fase 8: Módulo Educativo & Certificación**. Se ha establecido un sistema robusto de control escolar y se ha unificado la navegación institucional.
 
 ### Hitos Completados
 - [x] **Market Dashboard v2**: Navegación por pestañas, integración de Alpha Vantage (Sentimiento de Noticias y Plata XAG).
-- [x] **Portal Asociados (UI)**: Arquitectura de Sidebar/Topbar, Dashboard de bienvenida y Centro de Gestión de Comités (Frontend).
+- [x] **Portal Asociados (UI)**: Arquitectura de Sidebar/Topbar, Dashboard de bienvenida y Centro de Gestión de Comités.
 - [x] **Institutional Login**: Rediseño a formato Split-Screen con branding "Bursátil Precision".
-- [x] **Optimización Mobile-First**: Menú Hamburguesa (Drawer), tabs con scroll horizontal, grillas y paddings adaptables.
-- [x] **SEO Dinámico & Friendly URLs**: Implementación de slugs para eventos y noticias, metadata dinámica y títulos institucionales.
-- [x] **Optimización de Media**: Migración total a `next/image` en Hero, Noticias y Eventos para mejorar LCP.
+- [x] **Optimización Mobile-First**: Menú Hamburguesa (Drawer), tabs con scroll horizontal y grillas adaptables.
+- [x] **Módulo de Cátedras & Control Escolar**: 
+  - Refactorización a modelo relacional **Cátedra -> Materias -> Profesores**.
+  - Sistema de asistencia presencial vía códigos QR dinámicos.
+  - Gestión de calificaciones por materia (Kardex) y entregas de tareas.
+  - Carga masiva de alumnos vía CSV con invitaciones automáticas.
+- [x] **Hub de Educación (Public)**: Nueva landing page inmersiva en `/educacion` con diseño estilo "Eventos" y visualización de programas destacados.
+- [x] **Navegación Global v3**: Reorganización del menú principal en 4 pilares: **Global, Certificación, Asociados y Educación**.
 
 ---
 
@@ -22,61 +27,48 @@ El proyecto ha completado la **Fase 5: Integración de Datos Privados**. El midd
 
 1. **Estilos**: Vanilla CSS con **CSS Modules** (`.module.css`). **NO usar Tailwind CSS**.
 2. **Animaciones**: **Framer Motion** para transiciones de portal y micro-interacciones. `AnimatePresence` para el overlay del Drawer.
-3. **Portal Privado**: Estructurado en `src/app/[locale]/(portal)/asociados/portal/`. Utiliza `PortalLayout` compartido con `PortalSidebar` y `PortalTopbar`.
-4. **Supabase**:
-   - Consultas de Servidor: `src/lib/supabase/server.ts` (Usar en RSC para velocidad).
+3. **Portal Privado**: Estructurado en `src/app/[locale]/(portal)/asociados/portal/`. Utiliza `PortalLayout` compartido.
+4. **Módulo Educativo (Estructura)**:
+   - `public.catedras`: Programas de alto nivel (Diplomados/Certificaciones).
+   - `public.materias`: Módulos o materias dentro de una cátedra, asignados a un profesor.
+   - `public.materia_alumnos`: Registro de inscripciones y calificaciones granulares.
+5. **Supabase**:
+   - Consultas de Servidor: `src/lib/supabase/server.ts`.
    - Consultas de Cliente: `src/lib/supabase/client.ts`.
-   - Admin/Service Role: `src/lib/supabase/admin.ts` (Solo para procesos internos, **nunca** en el cliente).
-5. **Responsive**: Breakpoints en `768px` (móvil) y `1024px` (tablet). El Sidebar se convierte en Drawer colapsable en `≤1024px`.
+   - Admin/Service Role: `src/lib/supabase/admin.ts`.
 
 ---
 
 ## 🗺 Hoja de Ruta Actualizada (Roadmap)
 
-### Fase 5: Integración de Datos Privados ✅ COMPLETADA
-- [x] **Persistencia en Comités**: Migración y tabla `comites_sesiones` conectada. RSC consume datos reales.
-- [x] **Repositorio de Normatividad**: Vista `/normatividad` implementada.
-- [x] **Middleware de Seguridad**: `src/middleware.ts` — protege `/{locale}/asociados/portal/*` y `/{locale}/admin/*`. Redirige a `/login?redirectTo=` si no hay sesión. El LoginPage respeta el `redirectTo` al autenticar.
+### Fase 8: Módulo Educativo & Certificación ✅ COMPLETADA
+- [x] **Refactorización de Cátedras**: Migración a esquema de materias y profesores múltiples.
+- [x] **Asistencia QR**: Implementación de `sesiones_catedra` y escaneo dinámico.
+- [x] **Landing Page Educación**: Rediseño inmersivo con Hero de alto impacto y tarjetas de programas.
+- [x] **Navegación Unificada**: Rebranding de segmentos en Header y SegmentSwitcher.
 
-### Fase 6: Funcionalidades Administrativas ✅ COMPLETADA
-- [x] **Vista de Informes del Portal**: Diseñar e implementar la sección `/informes` con widgets de reportes.
-- [x] **Gestor de Minutas**: Flujo para consultar minutas de comités desde el portal y base de datos.
-- [x] **Notificaciones**: Sistema de alertas para próximas sesiones críticas (badge y toast).
-
-### Fase 7: Optimización & Despliegue
-- [x] **SEO Técnico**: Meta-tags dinámicos por noticia/página.
-- [x] **Performance**: Optimización de imágenes (Next/Image) y cargas diferidas.
-- [ ] **CI/CD**: Configuración final para despliegue automático en Hostinger.
+### Fase 9: Consolidación del Administrador 🏗 EN PROGRESO
+- [ ] **Gestión de Materias**: Vistas de edición para agregar módulos a programas existentes.
+- [ ] **Panel de Calificaciones**: Interfaz tipo hoja de cálculo para profesores.
+- [ ] **Visor de Contratos**: Studio para revisión de contratos de profesores y expedientes.
 
 ---
 
 ## 🚀 Guía de Despliegue (Hostinger)
 
-### 1. Requisitos Previos
-- **Node.js**: Versión 18.17 o superior (Recomendado 20+).
-- **Dominio**: Apuntando correctamente a Hostinger.
+### 1. Variables de Entorno
+Configurar en Panel de Hostinger o `.env.production`:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ALPHA_VANTAGE_KEY`
+- `GROQ_API_KEY`
 
-### 2. Variables de Entorno
-Deben configurarse en el Panel de Hostinger (Sección Node.js > Variables de Entorno) o en un archivo `.env.production`:
-- `NEXT_PUBLIC_SUPABASE_URL`: URL del proyecto Supabase.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Key pública para cliente.
-- `SUPABASE_SERVICE_ROLE_KEY`: Key privada (Server-side solo).
-- `ALPHA_VANTAGE_KEY`: API para datos financieros.
-- `GROQ_API_KEY`: API para IA (Asistente AMIB).
-
-### 3. Comandos de Build
-Desde la terminal de Hostinger o via CI/CD:
+### 2. Comandos de Build
 ```bash
 npm install
 npm run build
 ```
-
-### 4. Ejecución (PM2 Recomendado)
-Si tienes acceso a terminal (VPS), usa PM2 para mantener la app activa:
-```bash
-pm2 start npm --name "amib-web" -- start
-```
-Si usas el **Node.js App Installer** de Hostinger, asegúrate de que el "Application Startup File" sea `node_modules/next/dist/bin/next` o usa un `server.js` personalizado.
 
 ---
 
@@ -85,19 +77,13 @@ Si usas el **Node.js App Installer** de Hostinger, asegúrate de que el "Applica
 ```
 src/
 ├── app/[locale]/
-│   ├── login/
-│   │   ├── page.tsx          ← Login Split-Screen
-│   │   └── login.module.css
-│   └── (portal)/asociados/portal/
-│       ├── layout.tsx        ← Envuelve con PortalLayout
-│       ├── dashboard/page.tsx
-│       └── comites/page.tsx
+│   ├── (portal)/educacion/   ← Nueva Landing de Educación
+│   ├── (portal)/certificaciones/ ← Landing Pro de Certificación
+│   ├── (admin)/admin/catedras/ ← Gestión administrativa (Materias)
+│   └── actions/              ← Server Actions (CSV Import, Cátedras)
 ├── components/
-│   ├── portal/
-│   │   ├── PortalLayout.tsx  ← Sidebar + Topbar + Drawer lógica
-│   │   └── portal.module.css ← Sistema de diseño del portal
-│   └── ui/market/
-│       └── market.module.css ← Estilos del dashboard de mercado
+│   ├── portal/               ← Layouts y Sidebar
+│   └── ui/navigation/        ← Header y SegmentSwitcher
 └── lib/
     └── supabase/             ← server.ts / client.ts / admin.ts
 ```

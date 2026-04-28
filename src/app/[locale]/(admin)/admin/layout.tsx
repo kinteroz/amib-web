@@ -120,6 +120,33 @@ export default async function AdminLayout({
                 Comités
               </Link>
             </li>
+            <li style={{ marginTop: '1.5rem', marginBottom: '0.5rem', padding: '0 1rem', fontSize: '0.65rem', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>
+              Centro Educativo
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/instituciones`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Instituciones
+              </Link>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/catedras`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Cátedras
+              </Link>
+            </li>
           </ul>
         </nav>
 

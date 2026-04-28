@@ -6,8 +6,9 @@ import { Link, usePathname } from '@/i18n/routing';
 
 const SEGMENTS = [
   { id: 'global', label: 'Global', path: '/' },
+  { id: 'certificacion', label: 'Certificación', path: '/certificaciones' },
   { id: 'asociados', label: 'Asociados', path: '/asociados' },
-  { id: 'instituciones', label: 'Instituciones', path: '/instituciones' },
+  { id: 'educacion', label: 'Educación', path: '/educacion' },
 ];
 
 interface SegmentSwitcherProps {

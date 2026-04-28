@@ -15,8 +15,9 @@ export function Header() {
 
   const SEGMENTS = [
     { id: 'global', path: '/' },
+    { id: 'certificacion', path: '/certificaciones' },
     { id: 'asociados', path: '/asociados' },
-    { id: 'instituciones', path: '/instituciones' },
+    { id: 'educacion', path: '/educacion' },
   ];
 
   const currentSegment = SEGMENTS.find(s => {
@@ -85,16 +86,22 @@ export function Header() {
               <Link href="/asociados" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Beneficios</Link>
               <Link href="/asociados" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Autorregulación</Link>
             </>
-          ) : currentSegment === 'instituciones' ? (
+          ) : currentSegment === 'certificacion' ? (
             <>
-              <Link href="/instituciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>AMIB Certificación</Link>
-              <Link href="/instituciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Centro Educativo</Link>
-              <Link href="/certificaciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Guías</Link>
+              <Link href="/certificaciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Próximos Exámenes</Link>
+              <Link href="/certificaciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Guías y Procesos</Link>
+              <Link href="/certificaciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Padrón</Link>
+            </>
+          ) : currentSegment === 'educacion' ? (
+            <>
+              <Link href="/educacion" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Cátedras</Link>
+              <Link href="/educacion" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Programas</Link>
+              <Link href="/educacion" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Simulacro</Link>
             </>
           ) : (
             <>
               <Link href="/market" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Market</Link>
-              <Link href="/certificaciones" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Certificación</Link>
+              <Link href="/eventos" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Eventos</Link>
               <Link href="/" style={{ opacity: 0.8, whiteSpace: 'nowrap' }}>Nosotros</Link>
             </>
           )}
