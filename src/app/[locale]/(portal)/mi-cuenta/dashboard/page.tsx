@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { DashboardAsociado } from './DashboardAsociado';
 import { DashboardCertificado } from './DashboardCertificado';
 import { DashboardResponsable } from './DashboardResponsable';
+import { DashboardEncargadoCatedra } from './DashboardEncargadoCatedra';
 
 export default function DashboardController() {
   const user = usePortalUser();
@@ -24,6 +25,10 @@ export default function DashboardController() {
 
   if (role === 'responsable_comite') {
     return <DashboardResponsable user={user} locale={locale as string} />;
+  }
+
+  if (role === 'encargado_catedra') {
+    return <DashboardEncargadoCatedra user={user} locale={locale as string} />;
   }
 
   if (role === 'certificado') {

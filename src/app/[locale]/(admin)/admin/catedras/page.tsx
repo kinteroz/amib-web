@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 
-export default function AdminCatedras() {
+export default function AdminCatedras({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const [catedras, setCatedras] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -19,7 +20,8 @@ export default function AdminCatedras() {
       .select(`
         *,
         instituciones_educativas (nombre),
-        materias (count)
+        materias (count),
+        auth_users:encargado_amib_id (email, raw_user_meta_data)
       `)
       .order('fecha_inicio', { ascending: false });
     
@@ -35,7 +37,7 @@ export default function AdminCatedras() {
           <h1 style={{ fontSize: '2rem', color: '#0f172a', fontWeight: 700 }}>Cátedras (Programas)</h1>
           <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Gestiona los programas impartidos en convenio con instituciones educativas.</p>
         </div>
-        <Link href="/admin/catedras/nueva" style={{ 
+        <Link href={`/${locale}/admin/catedras/nueva`} style={{ 
             background: '#001F3F', 
             color: 'white', 
             border: 'none', 
@@ -54,6 +56,7 @@ export default function AdminCatedras() {
             <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
               <th style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Cátedra / Programa</th>
               <th style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Institución</th>
+              <th style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Encargado</th>
               <th style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Materias</th>
               <th style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Estatus</th>
               <th style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Acciones</th>
@@ -61,9 +64,9 @@ export default function AdminCatedras() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} style={{ padding: '2rem', textAlign: 'center' }}>Cargando programas...</td></tr>
+              <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center' }}>Cargando programas...</td></tr>
             ) : catedras.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: '2rem', textAlign: 'center' }}>No hay programas registrados.</td></tr>
+              <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center' }}>No hay programas registrados.</td></tr>
             ) : catedras.map((cat) => (
               <tr key={cat.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                 <td style={{ padding: '1.25rem', fontWeight: 600, color: '#0f172a' }}>
@@ -71,6 +74,16 @@ export default function AdminCatedras() {
                 </td>
                 <td style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#475569' }}>
                   {cat.instituciones_educativas?.nombre || 'N/A'}
+                </td>
+                <td style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#475569' }}>
+                  {cat.auth_users ? (
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{cat.auth_users.raw_user_meta_data?.full_name || 'Usuario'}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{cat.auth_users.email}</div>
+                    </div>
+                  ) : (
+                    <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Sin asignar</span>
+                  )}
                 </td>
                 <td style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#64748b' }}>
                   {cat.materias?.[0]?.count || 0} registradas
@@ -88,7 +101,7 @@ export default function AdminCatedras() {
                   </span>
                 </td>
                 <td style={{ padding: '1.25rem', display: 'flex', gap: '0.5rem' }}>
-                  <Link href={`/admin/catedras/${cat.id}`} style={{ 
+                  <Link href={`/${locale}/admin/catedras/${cat.id}`} style={{ 
                         background: '#f8fafc', 
                         color: '#334155', 
                         border: '1px solid #cbd5e1', 
