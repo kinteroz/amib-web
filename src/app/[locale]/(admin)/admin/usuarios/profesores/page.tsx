@@ -18,7 +18,6 @@ export default function AdminProfesores({ params }: { params: Promise<{ locale: 
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkingProfId, setLinkingProfId] = useState<string | null>(null);
   const [linkForm, setLinkForm] = useState({ email: '', password: '' });
-  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     nombre: '',
     email: '',
