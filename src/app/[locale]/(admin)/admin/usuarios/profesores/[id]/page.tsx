@@ -9,13 +9,17 @@ export default function ProfesorExpediente({ params }: { params: Promise<{ id: s
   const [profesor, setProfesor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const [form, setForm] = useState<any>({});
+  
   const supabase = createClient();
 
   useEffect(() => {
-    fetchProfesor();
+    fetchProfesorAndEmail();
   }, [id]);
 
-  const fetchProfesor = async () => {
+  const fetchProfesorAndEmail = async () => {
     setLoading(true);
     const { data } = await supabase
       .from('profesores')
@@ -24,6 +28,19 @@ export default function ProfesorExpediente({ params }: { params: Promise<{ id: s
       .single();
     
     setProfesor(data);
+    setForm(data);
+
+    if (data?.usuario_id) {
+      try {
+        const res = await fetch('/api/admin/usuarios');
+        const resData = await res.json();
+        const userMatch = resData.users?.find((u: any) => u.id === data.usuario_id);
+        if (userMatch) setEmail(userMatch.email);
+      } catch (e) {
+        console.error('Error fetching email', e);
+      }
+    }
+
     setLoading(false);
   };
 
@@ -36,6 +53,28 @@ export default function ProfesorExpediente({ params }: { params: Promise<{ id: s
     
     if (!error) {
       setProfesor({ ...profesor, estado_contrato: newStatus });
+      setForm({ ...form, estado_contrato: newStatus });
+    }
+    setSaving(false);
+  };
+
+  const handleSaveExpediente = async () => {
+    setSaving(true);
+    const { error } = await supabase
+      .from('profesores')
+      .update({
+        nombre: form.nombre,
+        rfc: form.rfc,
+        curp: form.curp,
+        especialidad: form.especialidad
+      })
+      .eq('id', id);
+    
+    if (!error) {
+      setProfesor({ ...form });
+      setEditMode(false);
+    } else {
+      alert('Error guardando expediente: ' + error.message);
     }
     setSaving(false);
   };
@@ -63,9 +102,20 @@ export default function ProfesorExpediente({ params }: { params: Promise<{ id: s
              <option value="FIRMADO">FIRMADO</option>
              <option value="FINALIZADO">FINALIZADO</option>
            </select>
-           <button style={{ padding: '0.5rem 1rem', background: '#001F3F', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem' }}>
-             Guardar Cambios
-           </button>
+           {editMode ? (
+             <>
+               <button onClick={() => {setEditMode(false); setForm(profesor);}} style={{ padding: '0.5rem 1rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
+                 Cancelar
+               </button>
+               <button onClick={handleSaveExpediente} disabled={saving} style={{ padding: '0.5rem 1rem', background: '#001F3F', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+                 {saving ? 'Guardando...' : 'Guardar Cambios'}
+               </button>
+             </>
+           ) : (
+             <button onClick={() => setEditMode(true)} style={{ padding: '0.5rem 1rem', background: '#e2e8f0', color: '#334155', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
+               ✏️ Editar Expediente
+             </button>
+           )}
         </div>
       </header>
 
@@ -77,21 +127,43 @@ export default function ProfesorExpediente({ params }: { params: Promise<{ id: s
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Nombre Completo</label>
-                <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.nombre}</div>
+                {editMode ? (
+                  <input value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} style={inputStyle} />
+                ) : (
+                  <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.nombre}</div>
+                )}
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Correo Electrónico de Acceso</label>
+                <div style={{ fontWeight: 600, color: email ? '#1e293b' : '#94a3b8' }}>
+                  {email || (profesor.usuario_id ? 'Cargando...' : 'No tiene acceso generado')}
+                </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>RFC</label>
-                  <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.rfc || 'No registrado'}</div>
+                  {editMode ? (
+                    <input value={form.rfc || ''} onChange={e => setForm({...form, rfc: e.target.value})} style={inputStyle} />
+                  ) : (
+                    <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.rfc || 'No registrado'}</div>
+                  )}
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>CURP</label>
-                  <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.curp || 'No registrado'}</div>
+                  {editMode ? (
+                    <input value={form.curp || ''} onChange={e => setForm({...form, curp: e.target.value})} style={inputStyle} />
+                  ) : (
+                    <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.curp || 'No registrado'}</div>
+                  )}
                 </div>
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Especialidad / Área</label>
-                <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.especialidad || 'N/A'}</div>
+                {editMode ? (
+                  <input value={form.especialidad || ''} onChange={e => setForm({...form, especialidad: e.target.value})} style={inputStyle} />
+                ) : (
+                  <div style={{ fontWeight: 600, color: '#1e293b' }}>{profesor.especialidad || 'N/A'}</div>
+                )}
               </div>
             </div>
           </section>
@@ -149,3 +221,7 @@ export default function ProfesorExpediente({ params }: { params: Promise<{ id: s
     </div>
   );
 }
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', color: '#1e293b', background: 'white', boxSizing: 'border-box'
+};

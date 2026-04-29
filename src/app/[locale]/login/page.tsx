@@ -28,7 +28,14 @@ export default function LoginPage() {
       // lea las cookies de sesión recién escritas sin condición de carrera.
       const base = `/${locale || 'es'}`;
       const redirectTo = searchParams.get('redirectTo');
-      const defaultDest = role === 'admin' ? `${base}/admin` : `${base}/mi-cuenta/dashboard`;
+      
+      let defaultDest = `${base}/mi-cuenta/dashboard`;
+      if (role === 'admin' || role === 'encargado_catedra') {
+        defaultDest = `${base}/admin`;
+      } else if (role === 'profesor') {
+        defaultDest = `${base}/profesor`;
+      }
+
       window.location.href = redirectTo ?? defaultDest;
     } catch (err: any) {
       setLoading(false);
