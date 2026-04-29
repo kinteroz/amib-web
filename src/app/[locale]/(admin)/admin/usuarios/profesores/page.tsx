@@ -198,25 +198,27 @@ export default function AdminProfesores({ params }: { params: Promise<{ locale: 
                   {prof.materias?.[0]?.count || 0}
                 </td>
                 <td style={{ padding: '1.25rem' }}>
-                  <Link href={`/${locale}/admin/usuarios/profesores/${prof.id}`} style={{ 
-                        background: '#f8fafc', color: '#334155', border: '1px solid #cbd5e1', 
-                        padding: '0.4rem 0.8rem', borderRadius: '6px', fontSize: '0.75rem',
-                        textDecoration: 'none', fontWeight: 600, display: 'inline-block', marginBottom: '0.25rem'
-                    }}
-                  >
-                    Ver Expediente
-                  </Link>
-                  {!prof.usuario_id && (
-                    <button 
-                      onClick={() => { setLinkingProfId(prof.id); setShowLinkModal(true); }}
-                      style={{ 
-                        background: '#fffbeb', color: '#d97706', border: '1px solid #fde68a', 
-                        padding: '0.4rem 0.8rem', borderRadius: '6px', fontSize: '0.75rem',
-                        fontWeight: 600, cursor: 'pointer', display: 'inline-block', width: '100%'
-                    }}>
-                      Generar Acceso
-                    </button>
-                  )}
+                  <div style={{ display: 'flex', gap: '0.4rem', flexDirection: 'column', maxWidth: '140px' }}>
+                    <Link href={`/${locale}/admin/usuarios/profesores/${prof.id}`} style={{ 
+                          background: 'white', color: '#0f172a', border: '1px solid #cbd5e1', 
+                          padding: '0.4rem 0.8rem', borderRadius: '6px', fontSize: '0.75rem',
+                          textDecoration: 'none', fontWeight: 600, textAlign: 'center', width: '100%', boxSizing: 'border-box'
+                      }}
+                    >
+                      Ver Expediente
+                    </Link>
+                    {!prof.usuario_id && (
+                      <button 
+                        onClick={() => { setLinkingProfId(prof.id); setShowLinkModal(true); }}
+                        style={{ 
+                          background: '#fffbeb', color: '#d97706', border: '1px solid #fde68a', 
+                          padding: '0.4rem 0.8rem', borderRadius: '6px', fontSize: '0.75rem',
+                          fontWeight: 600, cursor: 'pointer', textAlign: 'center', width: '100%', boxSizing: 'border-box'
+                      }}>
+                        Generar Acceso
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -315,5 +317,5 @@ export default function AdminProfesores({ params }: { params: Promise<{ locale: 
 }
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', color: '#1e293b'
+  width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', color: '#1e293b', background: 'white', boxSizing: 'border-box'
 };
