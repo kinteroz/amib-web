@@ -22,7 +22,8 @@ export default async function AdminLayout({
     redirect(`/${locale}/login`);
   }
 
-  if (user.user_metadata?.role !== 'admin') {
+  const role = user.user_metadata?.role;
+  if (role !== 'admin' && role !== 'encargado_catedra') {
     redirect(`/${locale}/mi-cuenta/dashboard`);
   }
 
@@ -60,66 +61,70 @@ export default async function AdminLayout({
                 Dashboard
               </Link>
             </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <Link href={`/${locale}/admin/noticias`} style={{ 
-                display: 'block', 
-                padding: '0.8rem 1rem', 
-                borderRadius: '8px', 
-                color: 'rgba(255,255,255,0.7)', 
-                textDecoration: 'none',
-                fontSize: '0.9rem'
-              }}>
-                Actualidad
-              </Link>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <Link href={`/${locale}/admin/indicadores`} style={{ 
-                display: 'block', 
-                padding: '0.8rem 1rem', 
-                borderRadius: '8px', 
-                color: 'rgba(255,255,255,0.7)', 
-                textDecoration: 'none',
-                fontSize: '0.9rem'
-              }}>
-                Indicadores
-              </Link>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <Link href={`/${locale}/admin/eventos`} style={{
-                display: 'block',
-                padding: '0.8rem 1rem',
-                borderRadius: '8px',
-                color: 'rgba(255,255,255,0.7)',
-                textDecoration: 'none',
-                fontSize: '0.9rem'
-              }}>
-                Eventos
-              </Link>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <Link href={`/${locale}/admin/usuarios`} style={{
-                display: 'block',
-                padding: '0.8rem 1rem',
-                borderRadius: '8px',
-                color: 'rgba(255,255,255,0.7)',
-                textDecoration: 'none',
-                fontSize: '0.9rem'
-              }}>
-                Usuarios
-              </Link>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <Link href={`/${locale}/admin/comites`} style={{
-                display: 'block',
-                padding: '0.8rem 1rem',
-                borderRadius: '8px',
-                color: 'rgba(255,255,255,0.7)',
-                textDecoration: 'none',
-                fontSize: '0.9rem'
-              }}>
-                Comités
-              </Link>
-            </li>
+            {role === 'admin' && (
+              <>
+                <li style={{ marginBottom: '0.5rem' }}>
+                  <Link href={`/${locale}/admin/noticias`} style={{ 
+                    display: 'block', 
+                    padding: '0.8rem 1rem', 
+                    borderRadius: '8px', 
+                    color: 'rgba(255,255,255,0.7)', 
+                    textDecoration: 'none',
+                    fontSize: '0.9rem'
+                  }}>
+                    Actualidad
+                  </Link>
+                </li>
+                <li style={{ marginBottom: '0.5rem' }}>
+                  <Link href={`/${locale}/admin/indicadores`} style={{ 
+                    display: 'block', 
+                    padding: '0.8rem 1rem', 
+                    borderRadius: '8px', 
+                    color: 'rgba(255,255,255,0.7)', 
+                    textDecoration: 'none',
+                    fontSize: '0.9rem'
+                  }}>
+                    Indicadores
+                  </Link>
+                </li>
+                <li style={{ marginBottom: '0.5rem' }}>
+                  <Link href={`/${locale}/admin/eventos`} style={{
+                    display: 'block',
+                    padding: '0.8rem 1rem',
+                    borderRadius: '8px',
+                    color: 'rgba(255,255,255,0.7)',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem'
+                  }}>
+                    Eventos
+                  </Link>
+                </li>
+                <li style={{ marginBottom: '0.5rem' }}>
+                  <Link href={`/${locale}/admin/usuarios`} style={{
+                    display: 'block',
+                    padding: '0.8rem 1rem',
+                    borderRadius: '8px',
+                    color: 'rgba(255,255,255,0.7)',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem'
+                  }}>
+                    Usuarios
+                  </Link>
+                </li>
+                <li style={{ marginBottom: '0.5rem' }}>
+                  <Link href={`/${locale}/admin/comites`} style={{
+                    display: 'block',
+                    padding: '0.8rem 1rem',
+                    borderRadius: '8px',
+                    color: 'rgba(255,255,255,0.7)',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem'
+                  }}>
+                    Comités
+                  </Link>
+                </li>
+              </>
+            )}
             <li style={{ marginTop: '1.5rem', marginBottom: '0.5rem', padding: '0 1rem', fontSize: '0.65rem', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>
               Centro Educativo
             </li>
@@ -133,6 +138,30 @@ export default async function AdminLayout({
                 fontSize: '0.9rem'
               }}>
                 Instituciones
+              </Link>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/usuarios/profesores`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Profesores
+              </Link>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <Link href={`/${locale}/admin/catedras/materias`} style={{
+                display: 'block',
+                padding: '0.8rem 1rem',
+                borderRadius: '8px',
+                color: 'rgba(255,255,255,0.7)',
+                textDecoration: 'none',
+                fontSize: '0.9rem'
+              }}>
+                Catálogo Materias
               </Link>
             </li>
             <li style={{ marginBottom: '0.5rem' }}>

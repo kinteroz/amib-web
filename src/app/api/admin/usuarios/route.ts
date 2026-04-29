@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
   if (!email || !password || !role) {
     return NextResponse.json({ error: 'email, password y role son requeridos' }, { status: 400 });
   }
-  if (!['admin', 'asociado', 'certificado', 'responsable_comite'].includes(role)) {
+  if (!['admin', 'asociado', 'certificado', 'responsable_comite', 'encargado_catedra', 'profesor'].includes(role)) {
     return NextResponse.json({ error: 'Rol inválido' }, { status: 400 });
   }
 
@@ -91,7 +91,7 @@ export async function PATCH(req: NextRequest) {
   const { id, role, nombre, institucion } = body;
 
   if (!id) return NextResponse.json({ error: 'id es requerido' }, { status: 400 });
-  if (role && !['admin', 'asociado', 'certificado', 'responsable_comite'].includes(role)) {
+  if (role && !['admin', 'asociado', 'certificado', 'responsable_comite', 'encargado_catedra', 'profesor'].includes(role)) {
     return NextResponse.json({ error: 'Rol inválido' }, { status: 400 });
   }
 

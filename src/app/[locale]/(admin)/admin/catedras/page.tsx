@@ -20,8 +20,7 @@ export default function AdminCatedras({ params }: { params: Promise<{ locale: st
       .select(`
         *,
         instituciones_educativas (nombre),
-        materias (count),
-        auth_users:encargado_amib_id (email, raw_user_meta_data)
+        materias (count)
       `)
       .order('fecha_inicio', { ascending: false });
     
@@ -76,10 +75,10 @@ export default function AdminCatedras({ params }: { params: Promise<{ locale: st
                   {cat.instituciones_educativas?.nombre || 'N/A'}
                 </td>
                 <td style={{ padding: '1.25rem', fontSize: '0.85rem', color: '#475569' }}>
-                  {cat.auth_users ? (
+                  {cat.encargado_amib_id ? (
                     <div>
-                      <div style={{ fontWeight: 600 }}>{cat.auth_users.raw_user_meta_data?.full_name || 'Usuario'}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{cat.auth_users.email}</div>
+                      <div style={{ fontWeight: 600, color: '#0f172a' }}>Asignado</div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>ID: {cat.encargado_amib_id.substring(0,8)}...</div>
                     </div>
                   ) : (
                     <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Sin asignar</span>

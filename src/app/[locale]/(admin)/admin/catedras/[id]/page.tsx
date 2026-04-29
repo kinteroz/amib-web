@@ -13,10 +13,20 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<CsvProcessingResult | null>(null);
-  
   // Encargado state
   const [encargados, setEncargados] = useState<any[]>([]);
   const [savingEncargado, setSavingEncargado] = useState(false);
+
+  // Materias state
+  const [profesoresList, setProfesoresList] = useState<any[]>([]);
+  const [catalogoMaterias, setCatalogoMaterias] = useState<any[]>([]);
+  const [showMateriaModal, setShowMateriaModal] = useState(false);
+  const [savingMateria, setSavingMateria] = useState(false);
+  const [materiaForm, setMateriaForm] = useState({ nombre: '', profesor_id: '' });
+
+  // Encargado state
+  const [potencialesEncargados, setPotencialesEncargados] = useState<any[]>([]);
+  const [showEncargadoSelect, setShowEncargadoSelect] = useState(false);
 
   const supabase = createClient();
 
@@ -62,14 +72,29 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
     
     setAlumnos(aluData || []);
 
-    // Fetch potential encargados (users with role encargado_catedra)
-    // Note: in a real app you might want an RPC or separate table if reading auth.users directly is restricted
-    // but assuming standard Supabase setup where admin can read or we use service role.
-    // For simplicity, we just fetch from a public view if available, or we let the admin type the email.
-    // Assuming we have a way to fetch users, or we just leave it as an email input.
-    // Actually, let's use the same approach as comites: fetch from a user profiles table if you have one, 
-    // or just let them pick from a list if you have a custom view.
-    // For now, let's assume we have an endpoint or we just show the assigned one.
+    // Fetch catalog of professors for the modal
+    const { data: profData } = await supabase
+      .from('profesores')
+      .select('id, nombre, especialidad')
+      .order('nombre', { ascending: true });
+    setProfesoresList(profData || []);
+
+    // Fetch catalog of materias
+    const { data: catMatData } = await supabase
+      .from('catalogo_materias')
+      .select('id, nombre')
+      .order('nombre', { ascending: true });
+    setCatalogoMaterias(catMatData || []);
+
+    // Fetch potential encargados (users with role encargado_catedra or admin)
+    try {
+      const res = await fetch('/api/admin/usuarios');
+      if (res.ok) {
+        const d = await res.json();
+        const valid = d.users.filter((u: any) => u.role === 'admin' || u.role === 'encargado_catedra');
+        setPotencialesEncargados(valid);
+      }
+    } catch(e) {}
     
     // We'll just fetch the current assigned one.
     if (catData?.encargado_amib_id) {
@@ -121,6 +146,40 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
     reader.readAsText(file);
   };
 
+  const handleAddMateria = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!materiaForm.nombre || !materiaForm.profesor_id) return;
+    
+    setSavingMateria(true);
+    const { error } = await supabase
+      .from('materias')
+      .insert({
+        catedra_id: id,
+        profesor_id: materiaForm.profesor_id,
+        nombre: materiaForm.nombre,
+        estatus: 'ACTIVA'
+      });
+      
+    if (error) {
+      alert('Error al agregar materia: ' + error.message);
+    } else {
+      setShowMateriaModal(false);
+      setMateriaForm({ nombre: '', profesor_id: '' });
+      fetchData();
+    }
+    setSavingMateria(false);
+  };
+
+  const handleDeleteMateria = async (materiaId: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta materia? Esto podría afectar a las calificaciones.')) return;
+    const { error } = await supabase.from('materias').delete().eq('id', materiaId);
+    if (error) {
+      alert('Error: ' + error.message);
+    } else {
+      fetchData();
+    }
+  };
+
   if (loading && !catedra) return <div style={{ padding: '2rem' }}>Cargando detalles...</div>;
   if (!catedra) return <div style={{ padding: '2rem' }}>Cátedra no encontrada.</div>;
 
@@ -149,7 +208,7 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
-             <button style={{ padding: '0.75rem 1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 600, cursor: 'pointer' }}>
+             <button style={{ padding: '0.75rem 1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', color: '#334155', fontWeight: 600, cursor: 'pointer' }}>
                Configuración
              </button>
              <Link href={`/${locale}/admin/catedras/${id}/asistencia`} style={{ padding: '0.75rem 1.25rem', borderRadius: '8px', background: '#001F3F', color: 'white', fontWeight: 600, textDecoration: 'none' }}>
@@ -237,7 +296,13 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
         {/* Right Column: Sidebar info */}
         <aside style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '1rem' }}>Materias y Profesores</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>Materias y Profesores</h3>
+              <button onClick={() => setShowMateriaModal(true)} style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+                + Agregar
+              </button>
+            </div>
+            
             {materias.length === 0 ? (
               <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>No hay materias registradas.</p>
             ) : materias.map((mat) => (
@@ -249,16 +314,21 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
                   <div style={{ fontWeight: 600, color: '#0f172a', fontSize: '0.9rem' }}>{mat.nombre}</div>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{mat.profesores?.nombre || 'Sin profesor'} · {mat.profesores?.especialidad || ''}</div>
                 </div>
-                <span style={{
-                  fontSize: '0.65rem',
-                  padding: '0.15rem 0.4rem',
-                  background: mat.estatus === 'ACTIVA' ? '#dcfce7' : '#f1f5f9',
-                  color: mat.estatus === 'ACTIVA' ? '#166534' : '#475569',
-                  borderRadius: '4px',
-                  fontWeight: 600
-                }}>
-                  {mat.estatus}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'flex-end' }}>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    padding: '0.15rem 0.4rem',
+                    background: mat.estatus === 'ACTIVA' ? '#dcfce7' : '#f1f5f9',
+                    color: mat.estatus === 'ACTIVA' ? '#166534' : '#475569',
+                    borderRadius: '4px',
+                    fontWeight: 600
+                  }}>
+                    {mat.estatus}
+                  </span>
+                  <button onClick={() => handleDeleteMateria(mat.id)} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 600, marginTop: '0.2rem' }}>
+                    Eliminar
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -298,18 +368,74 @@ export default function CatedraDetailsPage({ params }: { params: Promise<{ id: s
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>👤</div>
                   <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1rem' }}>No hay encargado asignado.</div>
-                  <button onClick={() => {
-                    const email = prompt('ID del usuario a asignar (en producción, usar un buscador):');
-                    if (email) handleAssignEncargado(email);
-                  }} disabled={savingEncargado} style={{ width: '100%', padding: '0.6rem', background: '#001F3F', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
-                    Asignar Encargado
-                  </button>
+                  {showEncargadoSelect ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <select 
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            handleAssignEncargado(e.target.value);
+                            setShowEncargadoSelect(false);
+                          }
+                        }}
+                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8rem', color: '#1e293b' }}
+                      >
+                        <option value="">Selecciona un usuario...</option>
+                        {potencialesEncargados.map(u => (
+                          <option key={u.id} value={u.id}>{u.nombre || u.email} ({u.role})</option>
+                        ))}
+                      </select>
+                      <button onClick={() => setShowEncargadoSelect(false)} style={{ width: '100%', padding: '0.4rem', background: 'white', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setShowEncargadoSelect(true)} disabled={savingEncargado} style={{ width: '100%', padding: '0.6rem', background: '#001F3F', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+                      Asignar Encargado
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           </div>
         </aside>
       </div>
+
+      {/* Modal Add Materia */}
+      {showMateriaModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '2.5rem', width: '100%', maxWidth: '450px' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem' }}>Agregar Materia</h2>
+            <form onSubmit={handleAddMateria} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>Materia (del Catálogo) *</label>
+                <select required value={materiaForm.nombre} onChange={e => setMateriaForm({...materiaForm, nombre: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: 'white', color: '#1e293b' }}>
+                  <option value="">Selecciona una materia...</option>
+                  {catalogoMaterias.map(m => (
+                    <option key={m.id} value={m.nombre}>{m.nombre}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '0.25rem' }}>Profesor Titular *</label>
+                <select required value={materiaForm.profesor_id} onChange={e => setMateriaForm({...materiaForm, profesor_id: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: 'white', color: '#1e293b' }}>
+                  <option value="">Selecciona un profesor...</option>
+                  {profesoresList.map(p => (
+                    <option key={p.id} value={p.id}>{p.nombre} ({p.especialidad || 'Sin especialidad'})</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setShowMateriaModal(false)} style={{ padding: '0.6rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>
+                  Cancelar
+                </button>
+                <button type="submit" disabled={savingMateria} style={{ padding: '0.6rem 1.5rem', borderRadius: '8px', border: 'none', background: '#001F3F', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: savingMateria ? 0.7 : 1 }}>
+                  {savingMateria ? 'Guardando...' : 'Agregar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

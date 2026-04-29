@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
-type Rol = 'admin' | 'asociado' | 'certificado' | 'responsable_comite';
+type Rol = 'admin' | 'asociado' | 'certificado' | 'responsable_comite' | 'encargado_catedra' | 'profesor';
 
 interface Usuario {
   id: string;
@@ -22,6 +22,8 @@ const ROL_LABELS: Record<string, { label: string; bg: string; color: string }> =
   asociado:           { label: 'Asociado',   bg: '#dbeafe', color: '#1e40af' },
   certificado:        { label: 'Certificado', bg: '#dcfce7', color: '#166534' },
   responsable_comite: { label: 'Responsable Comité', bg: '#f3e8ff', color: '#6b21a8' },
+  encargado_catedra:  { label: 'Encargado Cátedra', bg: '#e0e7ff', color: '#3730a3' },
+  profesor:           { label: 'Profesor', bg: '#ffedd5', color: '#9a3412' },
 };
 
 const sinRol = { label: 'Sin rol', bg: '#f1f5f9', color: '#64748b' };
@@ -157,17 +159,20 @@ export default function AdminUsuarios() {
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
           placeholder="Buscar por email, nombre o institución..."
-          style={{ flex: 1, padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+          style={{ flex: 1, padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.9rem', color: '#1e293b' }}
         />
         <select
           value={filtroRol}
           onChange={e => setFiltroRol(e.target.value as Rol | 'todos')}
-          style={{ padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', fontSize: '0.9rem' }}
+          style={{ padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', fontSize: '0.9rem', color: '#1e293b' }}
         >
           <option value="todos">Todos los roles</option>
           <option value="admin">Admin CMS</option>
+          <option value="encargado_catedra">Encargado Cátedra</option>
+          <option value="profesor">Profesor</option>
           <option value="asociado">Asociado</option>
           <option value="certificado">Certificado</option>
+          <option value="responsable_comite">Resp. Comité</option>
         </select>
       </div>
 
@@ -202,11 +207,14 @@ export default function AdminUsuarios() {
                         value={editingRolValue}
                         onChange={e => setEditingRolValue(e.target.value as Rol)}
                         autoFocus
-                        style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
+                        style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem', color: '#1e293b' }}
                       >
                         <option value="admin">Admin CMS</option>
+                        <option value="encargado_catedra">Encargado Cátedra</option>
+                        <option value="profesor">Profesor</option>
                         <option value="asociado">Asociado</option>
                         <option value="certificado">Certificado</option>
+                        <option value="responsable_comite">Resp. Comité</option>
                       </select>
                       <button onClick={() => guardarRol(u.id)} style={{ background: '#001F3F', color: 'white', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '5px', cursor: 'pointer', fontSize: '0.75rem' }}>✓</button>
                       <button onClick={() => setEditingRol(null)} style={{ background: 'none', border: '1px solid #e2e8f0', padding: '0.3rem 0.7rem', borderRadius: '5px', cursor: 'pointer', fontSize: '0.75rem' }}>✕</button>
@@ -308,6 +316,8 @@ export default function AdminUsuarios() {
                     <option value="certificado">Certificado</option>
                     <option value="asociado">Asociado</option>
                     <option value="responsable_comite">Responsable Comité (AMIB)</option>
+                    <option value="encargado_catedra">Encargado Cátedra</option>
+                    <option value="profesor">Profesor</option>
                     <option value="admin">Admin CMS</option>
                   </select>
                 </div>
