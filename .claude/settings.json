@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/Armando/.gemini/antigravity/brain/655ab689-6c82-4e8c-97c7-272c0f315a99/**)"
+      "Read(//c/Users/Armando/.gemini/antigravity/brain/655ab689-6c82-4e8c-97c7-272c0f315a99/**)",
+      "Bash(find /Users/armandoquintero/workspace/amib-web/src/app/[locale]/\\\\\\(portal\\\\\\)/mi-cuenta/oficios /Users/armandoquintero/workspace/amib-web/src/app/api/oficios -type f)",
+      "Bash(node -e \"const p = require\\('pdf-parse'\\); console.log\\('ok'\\)\")"
     ]
   }
 }

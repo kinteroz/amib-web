@@ -127,6 +127,21 @@ export function PortalSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: (
     },
   ];
 
+  const navItemsContralor: NavItem[] = [
+    {
+      id: 'oficios-cnbv',
+      label: 'Oficios CNBV',
+      path: `${basePortalPath}/oficios`,
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <path d="M9 13h6M9 17h4" />
+        </svg>
+      )
+    },
+  ];
+
   const navItemsResponsableComite: NavItem[] = [
     {
       id: 'dashboard',
@@ -193,13 +208,26 @@ export function PortalSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: (
         </svg>
       )
     },
+    {
+      id: 'oficios-cnbv',
+      label: 'Oficios CNBV',
+      path: `${basePortalPath}/oficios`,
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <path d="M9 13h6M9 17h4" />
+        </svg>
+      )
+    },
   ];
 
   // Logic to switch between navs based on role (default to asociado if undefined for backward compatibility)
   const role = user?.role?.toLowerCase();
   const isCertificado = role === 'certificado';
   const isResponsableComite = role === 'responsable_comite';
-  const navItems = isResponsableComite ? navItemsResponsableComite : isCertificado ? navItemsCertificado : navItemsAsociado;
+  const isContralor = role === 'contralor';
+  const navItems = isContralor ? navItemsContralor : isResponsableComite ? navItemsResponsableComite : isCertificado ? navItemsCertificado : navItemsAsociado;
 
   return (
     <>

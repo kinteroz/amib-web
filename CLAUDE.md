@@ -82,3 +82,200 @@ Este repo va a ser trabajado por varios desarrolladores humanos y agentes en par
 3. Solicitar guía de marca (logos, paleta, tipografías oficiales de AMIB) — si no existe, definirla en conjunto antes de cualquier UI.
 4. Definir estrategia de i18n (¿solo español? ¿inglés para inversionistas extranjeros?).
 5. Definir hosting objetivo (Vercel, infra del cliente, etc.) — afecta decisiones de SSR/ISR.
+
+---
+
+# MÓDULO: Sistema de Seguimiento de Oficios CNBV
+
+## 📋 Descripción
+
+Sistema completo para gestionar los oficios regulatorios que la CNBV envía a la AMIB. Reemplaza el flujo manual (Excel) con una herramienta web con capacidades de IA.
+
+**Flujo:** PDF oficio → Upload → Claude extrae datos → Usuario edita → Dashboard + Detalle → Historial
+
+**Etapas completadas:** 5/5 (Foundation, PDF+IA, Detalle, Dashboard, Historial)
+
+**Estado:** Listo para producción. Requiere: `ANTHROPIC_API_KEY` + migraciones SQL + bucket Supabase Storage.
+
+---
+
+## 🏗️ Arquitectura
+
+### Rutas en el portal (`/mi-cuenta/oficios/`)
+
+| Ruta | Función |
+|---|---|
+| `/mi-cuenta/oficios` | **Dashboard ejecutivo** — stats, alertas críticas (vencidos/urgentes), timeline 21 días, lista filtrable |
+| `/mi-cuenta/oficios/nuevo` | **Registrar oficio** — drag & drop PDF → IA extrae → formulario editable → guardar |
+| `/mi-cuenta/oficios/[id]` | **Detalle del oficio** — header con semáforo, lista de tareas (ciclo: pendiente→en_proceso→concluido), sidebar con datos, botón "Marcar cumplido" |
+| `/mi-cuenta/oficios/historial` | **Historial** — búsqueda, filtro por año/estatus, tasa cumplimiento animada |
+
+### Tablas Supabase
+
+```sql
+oficios (maestro de oficios)
+├─ numero_oficio, titulo, fecha_recepcion
+├─ plazo_dias_habiles, prorroga_dias, fecha_vencimiento
+├─ estatus (pendiente|en_proceso|cumplido)
+├─ resumen_ia, datos_extraidos_ia (JSON)
+├─ pdf_url, pdf_nombre (referencia a Storage)
+└─ created_by, created_at, updated_at
+
+oficio_tareas (tareas por oficio)
+├─ numero, descripcion, area_responsable
+├─ responsable_id (FK → auth.users)
+├─ fecha_planeada, fecha_completada
+├─ estatus (pendiente|en_proceso|concluido)
+└─ orden (para ordenar)
+
+festivos (catálogo 2026 — precargado)
+└─ fecha, descripcion, anio
+```
+
+### Migraciones SQL
+
+| Archivo | Contenido |
+|---|---|
+| `supabase/migrations/20260430_oficios_cnbv.sql` | Schema: tablas + RLS + triggers + función calcular_vencimiento() |
+| `supabase/migrations/20260430_seed_oficios_2026.sql` | Seed: 7 oficios históricos del Excel 2026 |
+
+### API Route
+
+```
+POST /api/oficios/procesar
+├─ Input: FormData con PDF file
+├─ Proceso: pdf-parse → texto → Claude Sonnet 4.6 → JSON
+└─ Output: { numero_oficio, titulo, fecha_recepcion, plazo_dias_habiles, criticidad, resumen, tareas_sugeridas[] }
+```
+
+---
+
+## 🔧 Setup para retomar
+
+### 1. Variables de entorno (`.env.local`)
+
+```bash
+# Ya existen:
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+
+# AGREGAR:
+ANTHROPIC_API_KEY=sk-ant-...  # https://console.anthropic.com
+```
+
+### 2. Migraciones SQL
+
+En **Supabase Dashboard → SQL Editor**, ejecuta ambos archivos en orden:
+1. `supabase/migrations/20260430_oficios_cnbv.sql`
+2. `supabase/migrations/20260430_seed_oficios_2026.sql`
+
+### 3. Supabase Storage
+
+- Dashboard → Storage → New bucket
+- Nombre: `oficios-pdfs` (privado)
+- Agregar RLS policies:
+
+```sql
+-- Insert: usuarios pueden subir a su carpeta
+CREATE POLICY "oficios_pdfs_insert"
+ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (
+  bucket_id = 'oficios-pdfs'
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Select: usuarios pueden leer del bucket
+CREATE POLICY "oficios_pdfs_select"
+ON storage.objects FOR SELECT TO authenticated
+USING (bucket_id = 'oficios-pdfs');
+```
+
+### 4. Dev server
+
+```bash
+npm run dev
+```
+
+Accede a: `http://localhost:3000/es/mi-cuenta/oficios` (requiere login con rol `responsable_comite`)
+
+---
+
+## 📊 Lógica del semáforo
+
+```typescript
+// Verde (✓): cumplido O días_restantes > 5
+// Amarillo (⚠️): 1–5 días para vencer
+// Rojo (🔴): vencido (días < 0)
+
+function getSemaforo(oficio: Oficio): Semaforo {
+  if (oficio.estatus === 'cumplido') return 'verde';
+  const dias = Math.ceil((fecha_vencimiento - now) / 86400000);
+  if (dias < 0) return 'rojo';
+  if (dias <= 5) return 'amarillo';
+  return 'verde';
+}
+```
+
+---
+
+## 💰 Costo API Anthropic
+
+**Por oficio procesado (~7K tokens entrada + 800 output):**
+- Input: $0.021 USD
+- Output: $0.012 USD
+- **Total: ~$0.033 USD ≈ $0.58 MXN**
+
+**Estimado anual (20 oficios/año):**
+- ~$0.80–$3.00 USD
+- ~$14–$53 MXN
+
+→ **Negligible. No es preocupación.**
+
+---
+
+## 🎨 Paleta del portal
+
+```
+Fondo oscuro:    #060e1c (sidebar), #002048 (primary)
+Acento dorado:   #EAAB00
+Glassmorphism:   rgba(255,255,255,0.03) bg + blur(8px)
+Cumplido (✓):    #10B981 (verde)
+Urgente (⚠️):    #F59E0B (amarillo)
+Vencido (🔴):    #EF4444 (rojo)
+```
+
+---
+
+## 📝 Notas de desarrollo
+
+- **Rol:** Nav item "Oficios CNBV" solo para `responsable_comite` en PortalLayout.tsx
+- **Festivos:** 2026 precargados en DB; usar función `calcular_vencimiento()` para WORKDAY
+- **PDF Storage:** Ruta es `oficios-pdfs/{user_id}/{timestamp}.{ext}` — RLS asegura privacidad
+- **Claude fallback:** Si JSON no válido → error message → user reintenta
+- **Auto-sync estatus:** Si todas las tareas son "concluido" → oficio automáticamente "cumplido"
+
+---
+
+## 🚀 Próximas mejoras posibles
+
+1. Notificaciones por email para oficios próximos a vencer
+2. Asignar responsable_id a tareas (UI dropdown de usuarios)
+3. Comentarios/activity log (tabla `oficio_comentarios` ya existe)
+4. Exportar historial a Excel/PDF
+5. Rol dedicado `oficial_cumplimiento` en Auth
+6. Caché resultados IA (si mismo oficio se sube 2x)
+7. Validación número oficio con regex: `155-1/XXXXXX/YYYY`
+
+---
+
+## 🔍 Troubleshooting
+
+| Problema | Causa | Fix |
+|---|---|---|
+| "ANTHROPIC_API_KEY no configurada" | .env.local incompleto | Agregar `ANTHROPIC_API_KEY=sk-ant-...` |
+| PDF no se procesa | Archivo protegido/corrupto | Pedir nuevo PDF a la CNBV |
+| JSON de Claude inválido | Respuesta inesperada | Reintentar (hay fallback) |
+| Bucket no existe | Setup incompleto | Crear `oficios-pdfs` en Dashboard |
+| Rutas no existen | Migraciones no corridas | Ejecutar .sql en Supabase |
+| Sin nav item | Usuario no tiene rol correcto | Asignar `role='responsable_comite'` |

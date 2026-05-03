@@ -34,6 +34,8 @@ export default function LoginPage() {
         defaultDest = `${base}/admin`;
       } else if (role === 'profesor') {
         defaultDest = `${base}/profesor`;
+      } else if (role === 'contralor') {
+        defaultDest = `${base}/mi-cuenta/oficios`;
       }
 
       window.location.href = redirectTo ?? defaultDest;

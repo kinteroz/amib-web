@@ -561,6 +561,177 @@ export interface Database {
           updated_at?: string
         }
       }
+      oficios: {
+        Row: {
+          id: string
+          numero_oficio: string
+          titulo: string | null
+          pdf_url: string | null
+          pdf_nombre: string | null
+          fecha_recepcion: string
+          fecha_efectos: string | null
+          plazo_dias_habiles: number
+          prorroga_dias: number
+          fecha_vencimiento: string | null
+          estatus: 'pendiente' | 'en_proceso' | 'cumplido'
+          resumen_ia: string | null
+          datos_extraidos_ia: Json | null
+          plan_general: Json | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          numero_oficio: string
+          titulo?: string | null
+          pdf_url?: string | null
+          pdf_nombre?: string | null
+          fecha_recepcion: string
+          fecha_efectos?: string | null
+          plazo_dias_habiles?: number
+          prorroga_dias?: number
+          fecha_vencimiento?: string | null
+          estatus?: 'pendiente' | 'en_proceso' | 'cumplido'
+          resumen_ia?: string | null
+          datos_extraidos_ia?: Json | null
+          plan_general?: Json | null
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          numero_oficio?: string
+          titulo?: string | null
+          pdf_url?: string | null
+          pdf_nombre?: string | null
+          fecha_recepcion?: string
+          fecha_efectos?: string | null
+          plazo_dias_habiles?: number
+          prorroga_dias?: number
+          fecha_vencimiento?: string | null
+          estatus?: 'pendiente' | 'en_proceso' | 'cumplido'
+          resumen_ia?: string | null
+          datos_extraidos_ia?: Json | null
+          plan_general?: Json | null
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      oficio_tarea_pasos: {
+        Row: {
+          id: string
+          tarea_id: string
+          orden: number
+          descripcion: string
+          entregable: string | null
+          dias_estimados: number | null
+          responsable_nombre: string | null
+          responsable_id: string | null
+          estatus: 'pendiente' | 'en_proceso' | 'concluido'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          tarea_id: string
+          orden?: number
+          descripcion: string
+          entregable?: string | null
+          dias_estimados?: number | null
+          responsable_nombre?: string | null
+          responsable_id?: string | null
+          estatus?: 'pendiente' | 'en_proceso' | 'concluido'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          tarea_id?: string
+          orden?: number
+          descripcion?: string
+          entregable?: string | null
+          dias_estimados?: number | null
+          responsable_nombre?: string | null
+          responsable_id?: string | null
+          estatus?: 'pendiente' | 'en_proceso' | 'concluido'
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      oficio_tareas: {
+        Row: {
+          id: string
+          oficio_id: string
+          numero: number | null
+          descripcion: string
+          detalle: string | null
+          area_responsable: string | null
+          responsable_id: string | null
+          fecha_planeada: string | null
+          fecha_completada: string | null
+          estatus: 'pendiente' | 'en_proceso' | 'concluido'
+          comentarios: string | null
+          orden: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          oficio_id: string
+          numero?: number | null
+          descripcion: string
+          detalle?: string | null
+          area_responsable?: string | null
+          responsable_id?: string | null
+          fecha_planeada?: string | null
+          fecha_completada?: string | null
+          estatus?: 'pendiente' | 'en_proceso' | 'concluido'
+          comentarios?: string | null
+          orden?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          oficio_id?: string
+          numero?: number | null
+          descripcion?: string
+          detalle?: string | null
+          area_responsable?: string | null
+          responsable_id?: string | null
+          fecha_planeada?: string | null
+          fecha_completada?: string | null
+          estatus?: 'pendiente' | 'en_proceso' | 'concluido'
+          comentarios?: string | null
+          orden?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      festivos: {
+        Row: {
+          id: string
+          fecha: string
+          descripcion: string
+          anio: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          fecha: string
+          descripcion: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          fecha?: string
+          descripcion?: string
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
