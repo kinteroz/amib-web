@@ -89,7 +89,7 @@ export async function POST(
     // Streaming obligatorio para respuestas largas (>10 min)
     const stream = client.messages.stream({
       model: 'claude-sonnet-4-6',
-      max_tokens: 64000,
+      max_tokens: 8192,
       system: `Eres un experto en gestión de cumplimiento regulatorio para instituciones bursátiles mexicanas.
 Tu tarea es generar planes de trabajo detallados y accionables para atender oficios de la CNBV.
 Los planes deben ser realistas, específicos y orientados al cumplimiento dentro del plazo establecido.
