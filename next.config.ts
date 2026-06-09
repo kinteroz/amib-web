@@ -10,6 +10,17 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          // Instruye a crawlers de IA que no indexen ni usen el contenido para entrenamiento
+          { key: 'X-Robots-Tag', value: 'noai, noimageai' },
+        ],
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

@@ -1,0 +1,137 @@
+# robots.txt — AMIB (amib.com.mx)
+# Generado: 2026-06-09
+# Política: Se prohíbe el rastreo con fines de entrenamiento de IA o minería de datos.
+
+# ── Crawlers de IA / entrenamiento de modelos ──────────────────────────────────
+
+# OpenAI
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# Google AI (Gemini / Bard training)
+User-agent: Google-Extended
+Disallow: /
+
+# Common Crawl (fuente de entrenamiento para GPT, LLaMA, Mistral, etc.)
+User-agent: CCBot
+Disallow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Perplexity-User
+Disallow: /
+
+# Meta AI
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# Amazon / Alexa AI
+User-agent: Amazonbot
+Disallow: /
+
+# ByteDance / TikTok
+User-agent: Bytespider
+Disallow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Disallow: /
+
+# Apple AI
+User-agent: Applebot-Extended
+Disallow: /
+
+# Allen Institute for AI (datasets Dolma / C4)
+User-agent: AI2Bot
+Disallow: /
+
+User-agent: Ai2Bot-Dolma
+Disallow: /
+
+# Diffbot (extracción estructurada de datos)
+User-agent: Diffbot
+Disallow: /
+
+# Scrapers / data brokers usados para datasets de ML
+User-agent: omgili
+Disallow: /
+
+User-agent: omgilibot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: peer39_crawler
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: img2dataset
+Disallow: /
+
+User-agent: Kangaroo Bot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: TurnitinBot
+Disallow: /
+
+User-agent: ISSCyberRiskCrawler
+Disallow: /
+
+User-agent: iaskspider
+Disallow: /
+
+# ── Buscadores legítimos (acceso completo) ─────────────────────────────────────
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# ── Regla por defecto para el resto ───────────────────────────────────────────
+
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+Sitemap: https://amib.com.mx/sitemap.xml

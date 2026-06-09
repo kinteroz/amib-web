@@ -25,6 +25,8 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* Protección contra crawlers de IA y scraping para entrenamiento de modelos */}
+        <meta name="robots" content="noai, noimageai" />
         {/* Critical: parsed before any external CSS file, eliminates white flash */}
         <style dangerouslySetInnerHTML={{ __html: `
           :root { color-scheme: dark; }
