@@ -170,7 +170,7 @@ El ahorro operativo hace que el sistema se pague por sí solo en el corto plazo.
 # Propuesta Económica
 
 **Inversión Única del Proyecto:**
-# $390,000 MXN
+# $390,000 MXN + iva
 
 <div class="highlight-box">
   <strong>Beneficios Inmediatos:</strong><br><br>
@@ -178,3 +178,18 @@ El ahorro operativo hace que el sistema se pague por sí solo en el corto plazo.
   • Eliminación de pagos recurrentes por plataformas de terceros.<br>
   • Modernización total de la imagen y servicio institucional de la AMIB.
 </div>
+
+---
+
+# Propuesta Económica Premium
+
+**Inversión Única del Proyecto:**
+# $440,000 MXN + iva
+
+<div class="highlight-box">
+  <strong>Incluye todo el Ecosistema AMIB +:</strong><br><br>
+  • **+ Gestor de Oficios:** Módulo especializado para la automatización, seguimiento y control de documentos oficiales.<br>
+  • Integración total con los módulos de certificación y asociados.<br>
+  • Dashboard avanzado de control documental.
+</div>
+

@@ -43,9 +43,9 @@ export default async function ProfessorLayout({
       }}>
         <div style={{ marginBottom: '2.5rem', padding: '0 0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: '32px', height: '32px', background: '#EAAB00', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#001F3F' }}>A</div>
+            <img src="/images/logo-amib-blanco.png" alt="AMIB Logo" style={{ height: 50, width: 'auto', objectFit: 'contain' }} />
             <div>
-              <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.02em', lineHeight: 1.1 }}>Portal AMIB</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.02em', lineHeight: 1.1 }}>Portal</div>
               <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.05em' }}>Cátedra Institucional</div>
             </div>
           </div>

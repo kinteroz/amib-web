@@ -54,13 +54,13 @@ export default function LoginPage() {
         </div>
         <div className={loginStyles.leftContent}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className={loginStyles.tagline}>Institutional Framework</div>
-            <h1 className={loginStyles.brandingTitle}>Bursátil</h1>
-            <div className={loginStyles.brandingSub}>Precision</div>
+            <img src="/images/logo-amib-blanco.png" alt="AMIB Logo" style={{ height: 140, width: 'auto', objectFit: 'contain', marginBottom: '1.5rem', display: 'block' }} />
+            <div className={loginStyles.tagline}>SISTEMA INTEGRAL</div>
+            <h1 className={loginStyles.brandingTitle}>Portal</h1>
+            <div className={loginStyles.brandingSub}>Institucional</div>
             <div className={loginStyles.divider} />
             <p className={loginStyles.description}>
-              Plataforma de alta integridad para la gestión de comités y normatividad bursátil. 
-              Diseñada bajo los estándares de rigor y transparencia de la AMIB.
+              Plataforma centralizada para la gestión de comités, educación y normatividad bursátil.
             </p>
           </motion.div>
         </div>
