@@ -52,6 +52,28 @@ El proyecto ha completado la **Fase 8: Módulo Educativo & Certificación**. Se 
 - [ ] **Panel de Calificaciones**: Interfaz tipo hoja de cálculo para profesores.
 - [ ] **Visor de Contratos**: Studio para revisión de contratos de profesores y expedientes.
 
+### Fase 10: Entrega — Eventos y Comités reales ✅ (2026-07-19)
+
+**Eventos (core cerrado):**
+- [x] `registerEvent` valida payload, liga `usuario_id` de la sesión, guarda ticket/institución/cargo, registra acompañantes con QR propio y evita doble registro por correo.
+- [x] "Mis eventos" (`/mi-cuenta/mis-eventos`) ahora consulta registros reales (por `usuario_id` o email de sesión) — se eliminó el mock.
+- [x] QR generado **localmente** (`qrcode` npm, componente `QrImage`) — se eliminó la dependencia de api.qrserver.com.
+- [x] **Check-in con cámara** en `/admin/eventos/[id]/asistentes` (`QrScanner`: BarcodeDetector nativo + fallback jsQR) con feedback visual.
+- [x] RLS endurecido: solo `admin` gestiona asistentes; el asistente lee lo suyo.
+
+**Comités (ciclo completo):**
+- [x] **Minuta con IA**: `/api/comites/generar-minuta` (Claude Sonnet) — pega notas → minuta formal + acuerdos detectados que se siembran en `comites_acuerdos` al guardar.
+- [x] **Kanban de acuerdos** con drag & drop (vista Tablero | Lista) y alerta de vencidos.
+- [x] **Firma de minutas**: botón "Firmar" (hash SHA-256 + usuario); trigger SQL pasa la minuta a `completada` cuando firman todos los miembros.
+- [x] **Mesas de trabajo**: `parent_id` en `comites_maestro`; el coordinador crea mesas bajo su comité desde "Mis Comités".
+- [x] Fix RLS de `minutas` (la policy vieja consultaba `auth.users` y bloqueaba todo).
+
+**⚠️ Migraciones pendientes de ejecutar en Supabase (SQL Editor, en orden):**
+1. `supabase/migrations/20260719_eventos_core.sql`
+2. `supabase/migrations/20260719_comites_ciclo.sql`
+
+**Pendientes de la entrega:** constancias de asistencia PDF, correo de confirmación con boleto, prueba manual end-to-end de ambos flujos (ver docs/TESTING.md), limpieza del repo.
+
 ---
 
 ## 🚀 Guía de Despliegue (Hostinger)

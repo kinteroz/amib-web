@@ -42,6 +42,9 @@ function AcuerdosContent() {
   const [form, setForm] = useState<AcuerdoForm>(emptyForm);
   const [formError, setFormError] = useState<string | null>(null);
   const [filterEstado, setFilterEstado] = useState<string>('todos');
+  const [vista, setVista] = useState<'lista' | 'tablero'>('tablero');
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -180,9 +183,25 @@ function AcuerdosContent() {
         ))}
       </div>
 
-      {/* Filtros */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        {['todos', 'abierto', 'en_proceso', 'cerrado'].map(f => (
+      {/* Filtros y vista */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.25rem', marginRight: '0.75rem' }}>
+          {(['tablero', 'lista'] as const).map(v => (
+            <button
+              key={v}
+              onClick={() => setVista(v)}
+              style={{
+                padding: '0.4rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                fontSize: '0.8rem', fontWeight: 700,
+                background: vista === v ? '#EAAB00' : 'transparent',
+                color: vista === v ? '#001F3F' : 'rgba(255,255,255,0.6)',
+              }}
+            >
+              {v === 'tablero' ? '▦ Tablero' : '☰ Lista'}
+            </button>
+          ))}
+        </div>
+        {vista === 'lista' && ['todos', 'abierto', 'en_proceso', 'cerrado'].map(f => (
           <button
             key={f}
             onClick={() => setFilterEstado(f)}
@@ -199,7 +218,78 @@ function AcuerdosContent() {
         ))}
       </div>
 
-      {loading ? (
+      {loading && vista === 'tablero' && <p style={{ color: '#94a3b8' }}>Cargando acuerdos...</p>}
+
+      {!loading && vista === 'tablero' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+          {(['abierto', 'en_proceso', 'cerrado'] as const).map(col => {
+            const items = acuerdos.filter(a => a.estado === col);
+            const meta = ESTADO_ACUERDO[col];
+            return (
+              <div
+                key={col}
+                onDragOver={e => { e.preventDefault(); setDragOverCol(col); }}
+                onDragLeave={() => setDragOverCol(c => (c === col ? null : c))}
+                onDrop={async e => {
+                  e.preventDefault();
+                  setDragOverCol(null);
+                  if (dragId) { await cambiarEstado(dragId, col); setDragId(null); }
+                }}
+                style={{
+                  background: dragOverCol === col ? 'rgba(234,171,0,0.12)' : 'rgba(255,255,255,0.04)',
+                  border: `1px ${dragOverCol === col ? 'dashed #EAAB00' : 'solid rgba(255,255,255,0.08)'}`,
+                  borderRadius: '16px', padding: '1rem', minHeight: '220px', transition: 'background 0.2s',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', padding: '0 0.25rem' }}>
+                  <span style={{ fontWeight: 800, color: 'white', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {meta.icon} {meta.label}
+                  </span>
+                  <span style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)', borderRadius: '999px', padding: '0.1rem 0.6rem', fontSize: '0.75rem', fontWeight: 700 }}>
+                    {items.length}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gap: '0.6rem' }}>
+                  {items.map(a => {
+                    const vencido = a.estado !== 'cerrado' && estaVencido(a.fecha_limite);
+                    return (
+                      <div
+                        key={a.id}
+                        draggable
+                        onDragStart={() => setDragId(a.id)}
+                        onDragEnd={() => setDragId(null)}
+                        style={{
+                          background: 'white', borderRadius: '10px', padding: '0.9rem 1rem',
+                          border: `1px solid ${vencido ? '#fca5a5' : '#e2e8f0'}`,
+                          cursor: 'grab', opacity: dragId === a.id ? 0.5 : 1,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        }}
+                      >
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0f172a', marginBottom: '0.4rem', lineHeight: 1.4 }}>{a.descripcion}</div>
+                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>📋 {a.minuta?.titulo}</span>
+                          {a.fecha_limite && (
+                            <span style={{ fontSize: '0.7rem', fontWeight: vencido ? 800 : 500, color: vencido ? '#dc2626' : '#64748b' }}>
+                              {vencido ? '⚠️ ' : '📅 '}{new Date(a.fecha_limite + 'T00:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {items.length === 0 && (
+                    <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.8rem', textAlign: 'center', padding: '1.5rem 0' }}>
+                      Arrastra acuerdos aquí
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {vista === 'tablero' ? null : loading ? (
         <p style={{ color: '#94a3b8' }}>Cargando acuerdos...</p>
       ) : acuerdosFiltrados.length === 0 ? (
         <div style={{ background: '#f8fafc', border: '2px dashed #e2e8f0', borderRadius: '16px', padding: '3rem', textAlign: 'center' }}>

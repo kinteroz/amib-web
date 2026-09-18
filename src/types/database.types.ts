@@ -425,6 +425,9 @@ export interface Database {
           usuario_id: string | null
           nombre_completo: string | null
           email: string | null
+          institucion: string | null
+          cargo: string | null
+          ticket_id: string | null
           qr_code: string
           asistio: boolean
           fecha_registro: string
@@ -436,6 +439,9 @@ export interface Database {
           usuario_id?: string | null
           nombre_completo?: string | null
           email?: string | null
+          institucion?: string | null
+          cargo?: string | null
+          ticket_id?: string | null
           qr_code: string
           asistio?: boolean
           fecha_registro?: string
@@ -447,6 +453,9 @@ export interface Database {
           usuario_id?: string | null
           nombre_completo?: string | null
           email?: string | null
+          institucion?: string | null
+          cargo?: string | null
+          ticket_id?: string | null
           qr_code?: string
           asistio?: boolean
           fecha_registro?: string

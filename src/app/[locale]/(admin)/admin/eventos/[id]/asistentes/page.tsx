@@ -1,16 +1,24 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect, use, useRef } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { QrScanner } from '@/components/ui/events/QrScanner';
+
+type FeedbackScan = { tipo: 'ok' | 'repetido' | 'error'; mensaje: string } | null;
 
 export default function GestorAsistentes({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const supabase = createClient();
   const [asistentes, setAsistentes] = useState<any[]>([]);
+  const asistentesRef = useRef<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [scannerData, setScannerData] = useState('');
   const [scanning, setScanning] = useState(false);
+  const [feedback, setFeedback] = useState<FeedbackScan>(null);
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => { asistentesRef.current = asistentes; }, [asistentes]);
 
   useEffect(() => {
     fetchAsistentes();
@@ -31,10 +39,10 @@ export default function GestorAsistentes({ params }: { params: Promise<{ id: str
   const toggleAsistencia = async (asistenteId: string, currentStatus: boolean) => {
     const { error } = await supabase
         .from('evento_asistentes')
-        .update({ 
-            asistio: !currentStatus, 
-            fecha_checkin: !currentStatus ? new Date().toISOString() : null 
-        })
+        .update({
+            asistio: !currentStatus,
+            fecha_checkin: !currentStatus ? new Date().toISOString() : null
+        } as never)
         .eq('id', asistenteId);
     
     if (!error) {
@@ -44,21 +52,32 @@ export default function GestorAsistentes({ params }: { params: Promise<{ id: str
     }
   };
 
+  const mostrarFeedback = (fb: NonNullable<FeedbackScan>) => {
+      if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+      setFeedback(fb);
+      feedbackTimer.current = setTimeout(() => setFeedback(null), 4000);
+  };
+
+  const procesarCodigo = async (codigo: string) => {
+      const limpio = codigo.trim();
+      if (!limpio) return;
+
+      const asis = asistentesRef.current.find(a => a.qr_code === limpio);
+      if (!asis) {
+          mostrarFeedback({ tipo: 'error', mensaje: 'Código QR no encontrado en este evento.' });
+          return;
+      }
+      if (asis.asistio) {
+          mostrarFeedback({ tipo: 'repetido', mensaje: `${asis.nombre_completo} ya tenía check-in registrado.` });
+          return;
+      }
+      await toggleAsistencia(asis.id, false);
+      mostrarFeedback({ tipo: 'ok', mensaje: `✓ Check-in exitoso: ${asis.nombre_completo}` });
+  };
+
   const handleManualScan = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!scannerData) return;
-
-      const asis = asistentes.find(a => a.qr_code === scannerData.trim());
-      if (asis) {
-          if (asis.asistio) {
-              alert('Este asistente YA FUE REGISTRADO previamente.');
-          } else {
-              await toggleAsistencia(asis.id, false);
-              alert(`Check-in exitoso para: ${asis.nombre_completo}`);
-          }
-      } else {
-          alert('Código QR no encontrado en este evento.');
-      }
+      await procesarCodigo(scannerData);
       setScannerData('');
   };
 
@@ -106,12 +125,23 @@ export default function GestorAsistentes({ params }: { params: Promise<{ id: str
                   </button>
               </form>
 
-              <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', cursor: 'pointer' }} onClick={() => setScanning(!scanning)}>
+              <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', fontWeight: 600, color: '#001F3F' }} onClick={() => setScanning(!scanning)}>
                   {scanning ? '📷 Apagar Cámara' : '📷 Usar Cámara del Dispositivo'}
               </div>
               {scanning && (
-                  <div style={{ marginTop: '1rem', height: '200px', background: 'black', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', textAlign: 'center' }}>
-                      [Área del Escáner de Cámara]<br/>Requiere librería html5-qrcode
+                  <div style={{ marginTop: '1rem' }}>
+                      <QrScanner onScan={procesarCodigo} height={260} />
+                      <p style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', marginTop: '0.5rem' }}>Apunta la cámara al boleto QR del asistente.</p>
+                  </div>
+              )}
+
+              {feedback && (
+                  <div style={{
+                      marginTop: '1rem', padding: '1rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.9rem', textAlign: 'center',
+                      background: feedback.tipo === 'ok' ? '#dcfce7' : feedback.tipo === 'repetido' ? '#fef9c3' : '#fee2e2',
+                      color: feedback.tipo === 'ok' ? '#166534' : feedback.tipo === 'repetido' ? '#854d0e' : '#991b1b',
+                  }}>
+                      {feedback.mensaje}
                   </div>
               )}
           </div>
@@ -123,6 +153,7 @@ export default function GestorAsistentes({ params }: { params: Promise<{ id: str
                     <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                         <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Asistente</th>
                         <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Email</th>
+                        <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Institución</th>
                         <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Código QR</th>
                         <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Estado</th>
                         <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Acciones</th>
@@ -130,14 +161,15 @@ export default function GestorAsistentes({ params }: { params: Promise<{ id: str
                 </thead>
                 <tbody>
                     {loading ? (
-                        <tr><td colSpan={5} style={{ padding: '2rem', textAlign: 'center' }}>Cargando...</td></tr>
+                        <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center' }}>Cargando...</td></tr>
                     ) : asistentes.length === 0 ? (
-                        <tr><td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay registros para este evento.</td></tr>
+                        <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>No hay registros para este evento.</td></tr>
                     ) : (
                         asistentes.map(a => (
                             <tr key={a.id} style={{ borderBottom: '1px solid #f1f5f9', background: a.asistio ? '#f0fdf4' : 'transparent' }}>
                                 <td style={{ padding: '1rem 1.5rem', fontWeight: 500, color: '#0f172a' }}>{a.nombre_completo}</td>
                                 <td style={{ padding: '1rem 1.5rem', color: '#64748b', fontSize: '0.9rem' }}>{a.email}</td>
+                                <td style={{ padding: '1rem 1.5rem', color: '#64748b', fontSize: '0.9rem' }}>{a.institucion || '—'}</td>
                                 <td style={{ padding: '1rem 1.5rem', color: '#64748b', fontSize: '0.8rem', fontFamily: 'monospace' }}>{a.qr_code.substring(0, 15)}...</td>
                                 <td style={{ padding: '1rem 1.5rem' }}>
                                     {a.asistio ? (

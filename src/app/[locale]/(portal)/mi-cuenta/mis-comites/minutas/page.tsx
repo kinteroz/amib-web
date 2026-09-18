@@ -17,6 +17,13 @@ interface MinutaForm {
   cuerpo_minuta: string;
 }
 
+interface AcuerdoSugerido {
+  descripcion: string;
+  area_o_responsable: string;
+  fecha_limite_sugerida: string | null;
+  incluir: boolean;
+}
+
 function MinutasContent() {
   const searchParams = useSearchParams();
   const comiteIdParam = searchParams.get('comite') || '';
@@ -32,6 +39,11 @@ function MinutasContent() {
   const [requestingFirmas, setRequestingFirmas] = useState(false);
   const [form, setForm] = useState<MinutaForm>({ sesion_id: '', titulo: '', cuerpo_minuta: '' });
   const [formError, setFormError] = useState<string | null>(null);
+  const [notasIA, setNotasIA] = useState('');
+  const [generando, setGenerando] = useState(false);
+  const [acuerdosSugeridos, setAcuerdosSugeridos] = useState<AcuerdoSugerido[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [firmando, setFirmando] = useState(false);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -52,6 +64,7 @@ function MinutasContent() {
   const fetchComites = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    setUserId(user.id);
     const { data } = await supabase
       .from('comites_maestro')
       .select('id, nombre')
@@ -59,6 +72,59 @@ function MinutasContent() {
       .eq('activo', true);
     setComites(data || []);
     if (!selectedComite && data && data.length > 0) setSelectedComite(data[0].id);
+  };
+
+  const generarConIA = async () => {
+    if (notasIA.trim().length < 30) {
+      setFormError('Escribe las notas de la sesión (mínimo unas líneas) para generar la minuta.');
+      return;
+    }
+    setGenerando(true);
+    setFormError(null);
+    try {
+      const sesion = sesiones.find(s => s.id === form.sesion_id);
+      const comite = comites.find(c => c.id === selectedComite);
+      const res = await fetch('/api/comites/generar-minuta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          notas: notasIA,
+          comite_nombre: comite?.nombre,
+          sesion_nombre: sesion?.nombre,
+          fecha: sesion?.fecha,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al generar la minuta.');
+      setForm(f => ({ ...f, titulo: data.titulo, cuerpo_minuta: data.cuerpo }));
+      setAcuerdosSugeridos((data.acuerdos_sugeridos || []).map((a: Omit<AcuerdoSugerido, 'incluir'>) => ({ ...a, incluir: true })));
+    } catch (err: any) {
+      setFormError(err.message || 'Error al generar la minuta.');
+    } finally {
+      setGenerando(false);
+    }
+  };
+
+  const firmarMinuta = async (minuta: any) => {
+    if (!userId) return;
+    setFirmando(true);
+    try {
+      const base = `${minuta.id}:${userId}:${Date.now()}`;
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(base));
+      const hash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const { error } = await supabase.from('comites_firmas').insert([{
+        minuta_id: minuta.id,
+        usuario_id: userId,
+        hash_firma: hash,
+      }]);
+      if (error) throw error;
+      setShowViewModal(null);
+      fetchMinutas();
+    } catch (err: any) {
+      alert(err.message?.includes('duplicate') ? 'Ya habías firmado esta minuta.' : 'No se pudo registrar la firma.');
+    } finally {
+      setFirmando(false);
+    }
   };
 
   const fetchSesiones = async () => {
@@ -94,16 +160,35 @@ function MinutasContent() {
     setSaving(true);
     setFormError(null);
     try {
-      const { error } = await supabase.from('minutas').insert([{
+      const { data: creada, error } = await supabase.from('minutas').insert([{
         sesion_id: form.sesion_id,
         titulo: form.titulo,
         cuerpo_minuta: { texto: form.cuerpo_minuta },
         archivo_url: '#',
         estado_firma: 'borrador',
-      }]);
+      }]).select('id').single();
       if (error) throw error;
+
+      // Sembrar los acuerdos detectados por la IA que quedaron seleccionados
+      const seleccionados = acuerdosSugeridos.filter(a => a.incluir);
+      if (creada && seleccionados.length > 0) {
+        const { error: errAcuerdos } = await supabase.from('comites_acuerdos').insert(
+          seleccionados.map(a => ({
+            minuta_id: (creada as any).id,
+            descripcion: a.area_o_responsable && a.area_o_responsable !== 'Por definir'
+              ? `${a.descripcion} (Responsable: ${a.area_o_responsable})`
+              : a.descripcion,
+            fecha_limite: a.fecha_limite_sugerida || null,
+            estado: 'abierto',
+          }))
+        );
+        if (errAcuerdos) console.error('Acuerdos no sembrados:', errAcuerdos.message);
+      }
+
       setShowModal(false);
       setForm({ sesion_id: '', titulo: '', cuerpo_minuta: '' });
+      setNotasIA('');
+      setAcuerdosSugeridos([]);
       fetchMinutas();
     } catch (err: any) {
       setFormError(err.message || 'Error al guardar');
@@ -216,6 +301,28 @@ function MinutasContent() {
                     ))}
                   </select>
                 </div>
+
+                {/* Asistente IA */}
+                <div style={{ background: 'linear-gradient(135deg, #f8f5ec 0%, #fdfaf3 100%)', border: '1px solid #EAAB00', borderRadius: '12px', padding: '1.25rem' }}>
+                  <div style={{ fontWeight: 700, color: '#001F3F', fontSize: '0.9rem', marginBottom: '0.3rem' }}>✨ Redactar con IA</div>
+                  <p style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '0.75rem' }}>
+                    Pega tus notas de la sesión y la IA redactará la minuta formal y detectará los acuerdos.
+                  </p>
+                  <textarea
+                    value={notasIA}
+                    onChange={e => setNotasIA(e.target.value)}
+                    placeholder="Ej. Asistieron Juan (presidente), Ana... Se revisó el tema X. Se acordó que Ana enviará el informe antes del 15 de agosto..."
+                    style={{ ...inputStyle, height: '110px', resize: 'vertical', fontFamily: 'inherit' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={generarConIA}
+                    disabled={generando}
+                    style={{ marginTop: '0.75rem', padding: '0.6rem 1.25rem', borderRadius: '8px', border: 'none', background: '#EAAB00', color: '#001F3F', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', opacity: generando ? 0.7 : 1 }}
+                  >
+                    {generando ? 'Generando minuta…' : '✨ Generar minuta y acuerdos'}
+                  </button>
+                </div>
                 <div style={{ display: 'grid', gap: '0.4rem' }}>
                   <label style={labelStyle}>Título de la Minuta *</label>
                   <input value={form.titulo} onChange={e => setForm({ ...form, titulo: e.target.value })} placeholder="Ej. Minuta Sesión Ordinaria Q2 2026" style={inputStyle} required />
@@ -229,6 +336,33 @@ function MinutasContent() {
                     style={{ ...inputStyle, height: '200px', resize: 'vertical', fontFamily: 'inherit' }}
                   />
                 </div>
+
+                {acuerdosSugeridos.length > 0 && (
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.25rem' }}>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
+                      ☑️ Acuerdos detectados ({acuerdosSugeridos.filter(a => a.incluir).length})
+                    </div>
+                    <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem' }}>Los acuerdos marcados se crearán automáticamente al guardar la minuta.</p>
+                    <div style={{ display: 'grid', gap: '0.5rem' }}>
+                      {acuerdosSugeridos.map((a, idx) => (
+                        <label key={idx} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', cursor: 'pointer', fontSize: '0.82rem', color: '#374151' }}>
+                          <input
+                            type="checkbox"
+                            checked={a.incluir}
+                            onChange={e => setAcuerdosSugeridos(prev => prev.map((p, i) => i === idx ? { ...p, incluir: e.target.checked } : p))}
+                            style={{ marginTop: '0.2rem' }}
+                          />
+                          <span>
+                            {a.descripcion}
+                            <span style={{ color: '#94a3b8' }}>
+                              {' '}— {a.area_o_responsable}{a.fecha_limite_sugerida ? ` · vence ${a.fecha_limite_sugerida}` : ''}
+                            </span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {formError && (
                   <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '0.75rem 1rem', color: '#dc2626', fontSize: '0.85rem' }}>{formError}</div>
                 )}
@@ -293,6 +427,15 @@ function MinutasContent() {
                     style={primaryBtnStyle}
                   >
                     Solicitar Firmas Digitales
+                  </button>
+                )}
+                {showViewModal.estado_firma === 'pendiente_firmas' && (
+                  <button
+                    onClick={() => firmarMinuta(showViewModal)}
+                    disabled={firmando}
+                    style={{ ...primaryBtnStyle, background: '#166534', opacity: firmando ? 0.7 : 1 }}
+                  >
+                    {firmando ? 'Firmando…' : '✍️ Firmar Minuta'}
                   </button>
                 )}
               </div>

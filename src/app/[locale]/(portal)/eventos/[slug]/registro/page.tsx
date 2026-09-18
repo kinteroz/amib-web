@@ -10,22 +10,16 @@ interface RegistrationPageProps {
 
 export default async function EventRegistrationPage({ params }: RegistrationPageProps) {
   const { slug } = await params;
-  console.log('[DEBUG] Registration Page Slug:', slug);
   const supabase = await createClient();
 
   // Fetch Event
-  const { data: evento, error } = (await supabase
+  const { data: evento } = (await supabase
     .from('eventos')
     .select('*')
     .eq('slug', slug)
     .single()) as any;
 
-  if (error) {
-    console.error('[DEBUG] Supabase Error fetching event:', error);
-  }
-  
   if (!evento) {
-    console.warn('[DEBUG] Event not found for Slug:', slug);
     notFound();
   }
   
