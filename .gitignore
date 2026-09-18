@@ -40,3 +40,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+encuentro-qr/
+GAFETES Y QR*.xlsx

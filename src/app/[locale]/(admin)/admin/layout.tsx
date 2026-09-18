@@ -115,6 +115,18 @@ export default async function AdminLayout({
                   </Link>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>
+                  <Link href={`/${locale}/admin/encuentro`} style={{
+                    display: 'block',
+                    padding: '0.8rem 1rem',
+                    borderRadius: '8px',
+                    color: 'rgba(255,255,255,0.7)',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem'
+                  }}>
+                    Encuentro 2026
+                  </Link>
+                </li>
+                <li style={{ marginBottom: '0.5rem' }}>
                   <Link href={`/${locale}/admin/comites`} style={{
                     display: 'block',
                     padding: '0.8rem 1rem',
