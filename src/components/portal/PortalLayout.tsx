@@ -246,9 +246,9 @@ export function PortalSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
       <div className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.sidebarHeader}>
-          <div className={styles.logoSquare}>A</div>
+          <img src="/images/logo-amib-blanco.png" alt="AMIB Logo" style={{ height: 50, width: 'auto', objectFit: 'contain', marginRight: '0.5rem' }} />
           <div className={styles.sidebarBrand}>
-            <span className={styles.brandName}>Portal AMIB</span>
+            <span className={styles.brandName}>Portal</span>
             <span className={styles.brandSub}>Jerarquía de Comité</span>
           </div>
           <button className={styles.closeSidebar} onClick={onClose}>

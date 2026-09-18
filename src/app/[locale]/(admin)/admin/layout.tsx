@@ -41,9 +41,12 @@ export default async function AdminLayout({
         height: '100vh',
         zIndex: 50
       }}>
-        <div style={{ marginBottom: '3rem', padding: '0 0.5rem' }}>
-          <div style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '0.05em' }}>AMIB <span style={{ opacity: 0.5, fontWeight: 400 }}>Admin</span></div>
-          <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, marginTop: '0.5rem', letterSpacing: '0.1em' }}>Institutional CMS</div>
+        <div style={{ marginBottom: '3rem', padding: '0 0.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <img src="/images/logo-amib-blanco.png" alt="AMIB Logo" style={{ height: 50, width: 'auto', objectFit: 'contain' }} />
+          <div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '0.05em' }}><span style={{ opacity: 0.5, fontWeight: 400 }}>Admin</span></div>
+            <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, marginTop: '0.2rem', letterSpacing: '0.1em' }}>Institutional CMS</div>
+          </div>
         </div>
 
         <nav style={{ flex: 1 }}>

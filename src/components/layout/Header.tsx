@@ -66,9 +66,8 @@ export function Header() {
     >
       {/* Left Column: Logo */}
       <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-        <Link href="/" style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '10px', color: 'inherit' }}>
-          <div style={{ width: 22, height: 22, borderRadius: 4, background: 'var(--color-secondary-container)' }} />
-          AMIB
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
+          <img src="/images/logo-amib-blanco.png" alt="AMIB Logo" style={{ height: 50, width: 'auto', objectFit: 'contain', filter: isScrolled ? 'brightness(0)' : 'none' }} />
         </Link>
       </div>
       
